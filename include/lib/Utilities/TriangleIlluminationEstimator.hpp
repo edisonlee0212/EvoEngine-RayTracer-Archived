@@ -7,7 +7,7 @@
 #include "IPrivateComponent.hpp"
 
 using namespace EvoEngine;
-namespace RayTracerFacility {
+namespace EvoEngine {
     class TriangleIlluminationEstimator : public IPrivateComponent {
         LightProbeGroup m_lightProbeGroup;
     public:

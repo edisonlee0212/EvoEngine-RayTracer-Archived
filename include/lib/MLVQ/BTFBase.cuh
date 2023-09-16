@@ -8,7 +8,7 @@
 
 #include <glm/glm.hpp>
 
-namespace RayTracerFacility {
+namespace EvoEngine {
     struct BTFBase {
         bool m_hasData = false;
 
@@ -81,4 +81,4 @@ namespace RayTracerFacility {
         }
 #pragma endregion
     };
-} // namespace RayTracerFacility
+} // namespace EvoEngine

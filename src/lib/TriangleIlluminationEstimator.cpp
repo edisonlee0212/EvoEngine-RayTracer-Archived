@@ -5,7 +5,7 @@
 #include "MeshRenderer.hpp"
 #include "Scene.hpp"
 #include "Mesh.hpp"
-using namespace RayTracerFacility;
+using namespace EvoEngine;
 
 void ColorDescendentsVertices(const std::shared_ptr<Scene>& scene, const Entity& owner,
 	const LightProbeGroup& lightProbeGroup) {

@@ -1,6 +1,6 @@
 #include "VulkanInterlop.hpp"
 
-using namespace RayTracerFacility;
+using namespace EvoEngine;
 
 CudaImage::~CudaImage()
 {

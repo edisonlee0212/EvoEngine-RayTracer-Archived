@@ -7,7 +7,7 @@
 #include "IPrivateComponent.hpp"
 #include "PointCloud.hpp"
 using namespace EvoEngine;
-namespace RayTracerFacility {
+namespace EvoEngine {
     class PointCloudScanner : public IPrivateComponent {
     public:
         float m_rotateAngle = 0.0f;

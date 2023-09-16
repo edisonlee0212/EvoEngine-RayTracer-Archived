@@ -5,7 +5,7 @@
 #include "filesystem"
 #include "BTFBase.cuh"
 using namespace EvoEngine;
-namespace RayTracerFacility {
+namespace EvoEngine {
     class CompressedBTF : public IAsset {
         std::vector<float> m_sharedCoordinatesBetaAngles;
 

@@ -3,7 +3,7 @@
 #include "SharedCoordinates.cuh"
 
 #define HERMITE_INTERPOLANT
-namespace RayTracerFacility {
+namespace EvoEngine {
     struct PDF1D {
         // the number of values for 1D function
         int m_numOfBeta;
@@ -69,4 +69,4 @@ namespace RayTracerFacility {
 
 #pragma endregion
     };
-} // namespace RayTracerFacility
+} // namespace EvoEngine

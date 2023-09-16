@@ -9,7 +9,7 @@
 #include "optix_device.h"
 #include "CurveSplineDefinations.hpp"
 #include "HitInfo.hpp"
-namespace RayTracerFacility {
+namespace EvoEngine {
     static __forceinline__ __device__ float3 GetHitPoint() {
         const float t = optixGetRayTmax();
         const float3 rayOrigin = optixGetWorldRayOrigin();
@@ -449,4 +449,4 @@ namespace RayTracerFacility {
                 OPTIX_SBT_RECORD_ALIGNMENT) char header[OPTIX_SBT_RECORD_HEADER_SIZE];
         SBT m_data;
     };
-} // namespace RayTracerFacility
+} // namespace EvoEngine

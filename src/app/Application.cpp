@@ -5,27 +5,19 @@
 #include <EditorLayer.hpp>
 #include "WindowLayer.hpp"
 #include "RenderLayer.hpp"
-#ifdef BUILD_RAYTRACER
 #include <RayTracerLayer.hpp>
 #include "BTFMeshRenderer.hpp"
 #include "TriangleIlluminationEstimator.hpp"
-#endif
 
-
-#ifdef BUILD_RAYTRACER
-using namespace RayTracerFacility;
-#endif
+using namespace EvoEngine;
 
 int main() {
-    const bool enableRayTracing = true;
     ApplicationInfo applicationInfo;
 
     Application::PushLayer<WindowLayer>();
     Application::PushLayer<EditorLayer>();
     Application::PushLayer<RenderLayer>();
-#ifdef BUILD_RAYTRACER
     Application::PushLayer<RayTracerLayer>();
-#endif
     Application::Initialize(applicationInfo);
 
 #pragma region Engine Loop

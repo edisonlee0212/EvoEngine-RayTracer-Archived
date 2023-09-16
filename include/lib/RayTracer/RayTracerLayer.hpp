@@ -9,7 +9,7 @@
 
 #include "Material.hpp"
 using namespace EvoEngine;
-namespace RayTracerFacility {
+namespace EvoEngine {
     class RayTracerLayer : public ILayer {
     protected:
         void UpdateMeshesStorage(std::unordered_map<uint64_t, RayTracedMaterial> &materialStorage,
@@ -60,4 +60,4 @@ namespace RayTracerFacility {
 
         void OnDestroy() override;
     };
-} // namespace RayTracerFacility
+} // namespace EvoEngine

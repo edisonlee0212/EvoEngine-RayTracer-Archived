@@ -1,6 +1,6 @@
 #include "RayFunctions.cuh"
 
-namespace RayTracerFacility {
+namespace EvoEngine {
     extern "C" __constant__ CameraRenderingLaunchParams cameraRenderingLaunchParams;
 #pragma region Closest hit functions
     extern "C" __global__ void __closesthit__CR_R() {
@@ -146,4 +146,4 @@ namespace RayTracerFacility {
                 .m_normalBuffer[fbIndex] = glm::vec4(pixelNormal, 1.0f);
     }
 #pragma endregion
-} // namespace RayTracerFacility
+} // namespace EvoEngine

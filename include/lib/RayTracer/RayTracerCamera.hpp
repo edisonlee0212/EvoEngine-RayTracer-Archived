@@ -10,7 +10,7 @@
 
 
 using namespace EvoEngine;
-namespace RayTracerFacility {
+namespace EvoEngine {
     class RayTracerCamera : public IPrivateComponent {
         friend class RayTracerLayer;
         friend class RayTracer;

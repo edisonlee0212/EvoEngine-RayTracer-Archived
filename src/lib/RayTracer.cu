@@ -23,7 +23,7 @@
 #include <imgui.h>
 #include <CUDAModule.hpp>
 
-using namespace RayTracerFacility;
+using namespace EvoEngine;
 
 void CameraProperties::Set(const glm::vec3 &position, const glm::quat &rotation) {
     auto newFront = glm::normalize(rotation * glm::vec3(0, 0, -1));
@@ -730,22 +730,22 @@ void RayTracer::CreateHitGroupPrograms() {
         pgDesc.hitgroup.entryFunctionNameIS = 0;
         OPTIX_CHECK(optixProgramGroupCreate(
                 m_optixDeviceContext, &pgDesc, 1, &pgOptions, log, &sizeofLog,
-                &m_cameraRenderingPipeline.m_hitGroupProgramGroups[RayType::Radiance][GeometryType::Triangle]));
+                &m_cameraRenderingPipeline.m_hitGroupProgramGroups[RayType::Radiance][PrimitiveType::Triangle]));
 
         pgDesc.hitgroup.moduleIS = m_cameraRenderingPipeline.m_linearCurveModule;
         OPTIX_CHECK(optixProgramGroupCreate(
                 m_optixDeviceContext, &pgDesc, 1, &pgOptions, log, &sizeofLog,
-                &m_cameraRenderingPipeline.m_hitGroupProgramGroups[RayType::Radiance][GeometryType::Linear]));
+                &m_cameraRenderingPipeline.m_hitGroupProgramGroups[RayType::Radiance][PrimitiveType::Linear]));
 
         pgDesc.hitgroup.moduleIS = m_cameraRenderingPipeline.m_quadraticCurveModule;
         OPTIX_CHECK(optixProgramGroupCreate(
                 m_optixDeviceContext, &pgDesc, 1, &pgOptions, log, &sizeofLog,
-                &m_cameraRenderingPipeline.m_hitGroupProgramGroups[RayType::Radiance][GeometryType::QuadraticBSpline]));
+                &m_cameraRenderingPipeline.m_hitGroupProgramGroups[RayType::Radiance][PrimitiveType::QuadraticBSpline]));
 
         pgDesc.hitgroup.moduleIS = m_cameraRenderingPipeline.m_cubicCurveModule;
         OPTIX_CHECK(optixProgramGroupCreate(
                 m_optixDeviceContext, &pgDesc, 1, &pgOptions, log, &sizeofLog,
-                &m_cameraRenderingPipeline.m_hitGroupProgramGroups[RayType::Radiance][GeometryType::CubicBSpline]));
+                &m_cameraRenderingPipeline.m_hitGroupProgramGroups[RayType::Radiance][PrimitiveType::CubicBSpline]));
 
         if (sizeofLog > 1)
             std::cout << log << std::endl;
@@ -757,22 +757,22 @@ void RayTracer::CreateHitGroupPrograms() {
         pgDesc.hitgroup.entryFunctionNameAH = "__anyhit__CR_SS";
         OPTIX_CHECK(optixProgramGroupCreate(
                 m_optixDeviceContext, &pgDesc, 1, &pgOptions, log, &sizeofLog,
-                &m_cameraRenderingPipeline.m_hitGroupProgramGroups[RayType::SpacialSampling][GeometryType::Triangle]));
+                &m_cameraRenderingPipeline.m_hitGroupProgramGroups[RayType::SpacialSampling][PrimitiveType::Triangle]));
 
         pgDesc.hitgroup.moduleIS = m_cameraRenderingPipeline.m_linearCurveModule;
         OPTIX_CHECK(optixProgramGroupCreate(
                 m_optixDeviceContext, &pgDesc, 1, &pgOptions, log, &sizeofLog,
-                &m_cameraRenderingPipeline.m_hitGroupProgramGroups[RayType::SpacialSampling][GeometryType::Linear]));;
+                &m_cameraRenderingPipeline.m_hitGroupProgramGroups[RayType::SpacialSampling][PrimitiveType::Linear]));;
 
         pgDesc.hitgroup.moduleIS = m_cameraRenderingPipeline.m_quadraticCurveModule;
         OPTIX_CHECK(optixProgramGroupCreate(
                 m_optixDeviceContext, &pgDesc, 1, &pgOptions, log, &sizeofLog,
-                &m_cameraRenderingPipeline.m_hitGroupProgramGroups[RayType::SpacialSampling][GeometryType::QuadraticBSpline]));
+                &m_cameraRenderingPipeline.m_hitGroupProgramGroups[RayType::SpacialSampling][PrimitiveType::QuadraticBSpline]));
 
         pgDesc.hitgroup.moduleIS = m_cameraRenderingPipeline.m_cubicCurveModule;
         OPTIX_CHECK(optixProgramGroupCreate(
                 m_optixDeviceContext, &pgDesc, 1, &pgOptions, log, &sizeofLog,
-                &m_cameraRenderingPipeline.m_hitGroupProgramGroups[RayType::SpacialSampling][GeometryType::CubicBSpline]));
+                &m_cameraRenderingPipeline.m_hitGroupProgramGroups[RayType::SpacialSampling][PrimitiveType::CubicBSpline]));
 
         if (sizeofLog > 1)
             std::cout << log << std::endl;
@@ -793,22 +793,22 @@ void RayTracer::CreateHitGroupPrograms() {
         pgDesc.hitgroup.entryFunctionNameAH = "__anyhit__IE_R";
         OPTIX_CHECK(optixProgramGroupCreate(
                 m_optixDeviceContext, &pgDesc, 1, &pgOptions, log, &sizeofLog,
-                &m_illuminationEstimationPipeline.m_hitGroupProgramGroups[RayType::Radiance][GeometryType::Triangle]));
+                &m_illuminationEstimationPipeline.m_hitGroupProgramGroups[RayType::Radiance][PrimitiveType::Triangle]));
 
         pgDesc.hitgroup.moduleIS = m_illuminationEstimationPipeline.m_linearCurveModule;
         OPTIX_CHECK(optixProgramGroupCreate(
                 m_optixDeviceContext, &pgDesc, 1, &pgOptions, log, &sizeofLog,
-                &m_illuminationEstimationPipeline.m_hitGroupProgramGroups[RayType::Radiance][GeometryType::Linear]));
+                &m_illuminationEstimationPipeline.m_hitGroupProgramGroups[RayType::Radiance][PrimitiveType::Linear]));
 
         pgDesc.hitgroup.moduleIS = m_illuminationEstimationPipeline.m_quadraticCurveModule;
         OPTIX_CHECK(optixProgramGroupCreate(
                 m_optixDeviceContext, &pgDesc, 1, &pgOptions, log, &sizeofLog,
-                &m_illuminationEstimationPipeline.m_hitGroupProgramGroups[RayType::Radiance][GeometryType::QuadraticBSpline]));
+                &m_illuminationEstimationPipeline.m_hitGroupProgramGroups[RayType::Radiance][PrimitiveType::QuadraticBSpline]));
 
         pgDesc.hitgroup.moduleIS = m_illuminationEstimationPipeline.m_cubicCurveModule;
         OPTIX_CHECK(optixProgramGroupCreate(
                 m_optixDeviceContext, &pgDesc, 1, &pgOptions, log, &sizeofLog,
-                &m_illuminationEstimationPipeline.m_hitGroupProgramGroups[RayType::Radiance][GeometryType::CubicBSpline]));
+                &m_illuminationEstimationPipeline.m_hitGroupProgramGroups[RayType::Radiance][PrimitiveType::CubicBSpline]));
         if (sizeofLog > 1)
             std::cout << log << std::endl;
         // -------------------------------------------------------
@@ -818,22 +818,22 @@ void RayTracer::CreateHitGroupPrograms() {
         pgDesc.hitgroup.entryFunctionNameAH = "__anyhit__IE_SS";
         OPTIX_CHECK(optixProgramGroupCreate(
                 m_optixDeviceContext, &pgDesc, 1, &pgOptions, log, &sizeofLog,
-                &m_illuminationEstimationPipeline.m_hitGroupProgramGroups[RayType::SpacialSampling][GeometryType::Triangle]));
+                &m_illuminationEstimationPipeline.m_hitGroupProgramGroups[RayType::SpacialSampling][PrimitiveType::Triangle]));
 
         pgDesc.hitgroup.moduleIS = m_illuminationEstimationPipeline.m_linearCurveModule;
         OPTIX_CHECK(optixProgramGroupCreate(
                 m_optixDeviceContext, &pgDesc, 1, &pgOptions, log, &sizeofLog,
-                &m_illuminationEstimationPipeline.m_hitGroupProgramGroups[RayType::SpacialSampling][GeometryType::Linear]));
+                &m_illuminationEstimationPipeline.m_hitGroupProgramGroups[RayType::SpacialSampling][PrimitiveType::Linear]));
 
         pgDesc.hitgroup.moduleIS = m_illuminationEstimationPipeline.m_quadraticCurveModule;
         OPTIX_CHECK(optixProgramGroupCreate(
                 m_optixDeviceContext, &pgDesc, 1, &pgOptions, log, &sizeofLog,
-                &m_illuminationEstimationPipeline.m_hitGroupProgramGroups[RayType::SpacialSampling][GeometryType::QuadraticBSpline]));
+                &m_illuminationEstimationPipeline.m_hitGroupProgramGroups[RayType::SpacialSampling][PrimitiveType::QuadraticBSpline]));
 
         pgDesc.hitgroup.moduleIS = m_illuminationEstimationPipeline.m_cubicCurveModule;
         OPTIX_CHECK(optixProgramGroupCreate(
                 m_optixDeviceContext, &pgDesc, 1, &pgOptions, log, &sizeofLog,
-                &m_illuminationEstimationPipeline.m_hitGroupProgramGroups[RayType::SpacialSampling][GeometryType::CubicBSpline]));
+                &m_illuminationEstimationPipeline.m_hitGroupProgramGroups[RayType::SpacialSampling][PrimitiveType::CubicBSpline]));
         if (sizeofLog > 1)
             std::cout << log << std::endl;
     }
@@ -854,22 +854,22 @@ void RayTracer::CreateHitGroupPrograms() {
         pgDesc.hitgroup.entryFunctionNameAH = "__anyhit__PCS_R";
         OPTIX_CHECK(optixProgramGroupCreate(
                 m_optixDeviceContext, &pgDesc, 1, &pgOptions, log, &sizeofLog,
-                &m_pointCloudScanningPipeline.m_hitGroupProgramGroups[RayType::Radiance][GeometryType::Triangle]));
+                &m_pointCloudScanningPipeline.m_hitGroupProgramGroups[RayType::Radiance][PrimitiveType::Triangle]));
 
         pgDesc.hitgroup.moduleIS = m_pointCloudScanningPipeline.m_linearCurveModule;
         OPTIX_CHECK(optixProgramGroupCreate(
                 m_optixDeviceContext, &pgDesc, 1, &pgOptions, log, &sizeofLog,
-                &m_pointCloudScanningPipeline.m_hitGroupProgramGroups[RayType::Radiance][GeometryType::Linear]));
+                &m_pointCloudScanningPipeline.m_hitGroupProgramGroups[RayType::Radiance][PrimitiveType::Linear]));
 
         pgDesc.hitgroup.moduleIS = m_pointCloudScanningPipeline.m_quadraticCurveModule;
         OPTIX_CHECK(optixProgramGroupCreate(
                 m_optixDeviceContext, &pgDesc, 1, &pgOptions, log, &sizeofLog,
-                &m_pointCloudScanningPipeline.m_hitGroupProgramGroups[RayType::Radiance][GeometryType::QuadraticBSpline]));
+                &m_pointCloudScanningPipeline.m_hitGroupProgramGroups[RayType::Radiance][PrimitiveType::QuadraticBSpline]));
 
         pgDesc.hitgroup.moduleIS = m_pointCloudScanningPipeline.m_cubicCurveModule;
         OPTIX_CHECK(optixProgramGroupCreate(
                 m_optixDeviceContext, &pgDesc, 1, &pgOptions, log, &sizeofLog,
-                &m_pointCloudScanningPipeline.m_hitGroupProgramGroups[RayType::Radiance][GeometryType::CubicBSpline]));
+                &m_pointCloudScanningPipeline.m_hitGroupProgramGroups[RayType::Radiance][PrimitiveType::CubicBSpline]));
         if (sizeofLog > 1)
             std::cout << log << std::endl;
         // -------------------------------------------------------
@@ -879,22 +879,22 @@ void RayTracer::CreateHitGroupPrograms() {
         pgDesc.hitgroup.entryFunctionNameAH = "__anyhit__PCS_SS";
         OPTIX_CHECK(optixProgramGroupCreate(
                 m_optixDeviceContext, &pgDesc, 1, &pgOptions, log, &sizeofLog,
-                &m_pointCloudScanningPipeline.m_hitGroupProgramGroups[RayType::SpacialSampling][GeometryType::Triangle]));
+                &m_pointCloudScanningPipeline.m_hitGroupProgramGroups[RayType::SpacialSampling][PrimitiveType::Triangle]));
 
         pgDesc.hitgroup.moduleIS = m_pointCloudScanningPipeline.m_linearCurveModule;
         OPTIX_CHECK(optixProgramGroupCreate(
                 m_optixDeviceContext, &pgDesc, 1, &pgOptions, log, &sizeofLog,
-                &m_pointCloudScanningPipeline.m_hitGroupProgramGroups[RayType::SpacialSampling][GeometryType::Linear]));
+                &m_pointCloudScanningPipeline.m_hitGroupProgramGroups[RayType::SpacialSampling][PrimitiveType::Linear]));
 
         pgDesc.hitgroup.moduleIS = m_pointCloudScanningPipeline.m_quadraticCurveModule;
         OPTIX_CHECK(optixProgramGroupCreate(
                 m_optixDeviceContext, &pgDesc, 1, &pgOptions, log, &sizeofLog,
-                &m_pointCloudScanningPipeline.m_hitGroupProgramGroups[RayType::SpacialSampling][GeometryType::QuadraticBSpline]));
+                &m_pointCloudScanningPipeline.m_hitGroupProgramGroups[RayType::SpacialSampling][PrimitiveType::QuadraticBSpline]));
 
         pgDesc.hitgroup.moduleIS = m_pointCloudScanningPipeline.m_cubicCurveModule;
         OPTIX_CHECK(optixProgramGroupCreate(
                 m_optixDeviceContext, &pgDesc, 1, &pgOptions, log, &sizeofLog,
-                &m_pointCloudScanningPipeline.m_hitGroupProgramGroups[RayType::SpacialSampling][GeometryType::CubicBSpline]));
+                &m_pointCloudScanningPipeline.m_hitGroupProgramGroups[RayType::SpacialSampling][PrimitiveType::CubicBSpline]));
         if (sizeofLog > 1)
             std::cout << log << std::endl;
     }
@@ -1051,13 +1051,13 @@ void RayTracedGeometry::BuildGAS(const OptixDeviceContext &context) {
 
             buildInput.type = OPTIX_BUILD_INPUT_TYPE_CURVES;
             switch (m_geometryType) {
-                case GeometryType::Linear:
+                case PrimitiveType::Linear:
                     buildInput.curveArray.curveType = OPTIX_PRIMITIVE_TYPE_ROUND_LINEAR;
                     break;
-                case GeometryType::QuadraticBSpline:
+                case PrimitiveType::QuadraticBSpline:
                     buildInput.curveArray.curveType = OPTIX_PRIMITIVE_TYPE_ROUND_QUADRATIC_BSPLINE;
                     break;
-                case GeometryType::CubicBSpline:
+                case PrimitiveType::CubicBSpline:
                     buildInput.curveArray.curveType = OPTIX_PRIMITIVE_TYPE_ROUND_CUBIC_BSPLINE;
                     break;
             }
@@ -1343,7 +1343,7 @@ void RayTracedGeometry::BuildGAS(const OptixDeviceContext &context) {
 
 void RayTracedGeometry::UploadForSBT() {
     m_geometryBuffer.Free();
-    if (m_geometryType != GeometryType::Triangle) {
+    if (m_geometryType != PrimitiveType::Triangle) {
         Curves curves;
         curves.m_strandPoints = reinterpret_cast<EvoEngine::StrandPoint *>(m_vertexDataBuffer.DevicePointer());
         //curves.m_strandU = reinterpret_cast<glm::vec2 *>(m_curveStrandUBuffer.DevicePointer());

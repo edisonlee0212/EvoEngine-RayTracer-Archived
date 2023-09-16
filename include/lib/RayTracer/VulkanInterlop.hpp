@@ -3,7 +3,7 @@
 
 #include "Optix7.hpp"
 
-namespace RayTracerFacility
+namespace EvoEngine
 {
 	class CudaImage
 	{

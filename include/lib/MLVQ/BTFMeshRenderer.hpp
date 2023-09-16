@@ -3,7 +3,7 @@
 #include "IPrivateComponent.hpp"
 
 using namespace EvoEngine;
-namespace RayTracerFacility {
+namespace EvoEngine {
     class BTFMeshRenderer : public IPrivateComponent {
     public:
         AssetRef m_mesh;
@@ -15,4 +15,4 @@ namespace RayTracerFacility {
 
         void CollectAssetRef(std::vector<AssetRef> &list) override;
     };
-} // namespace RayTracerFacility
+} // namespace EvoEngine

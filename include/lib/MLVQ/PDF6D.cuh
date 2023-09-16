@@ -3,7 +3,7 @@
 #include "PDF4D.cuh"
 #include "SharedCoordinates.cuh"
 
-namespace RayTracerFacility {
+namespace EvoEngine {
 template <typename T> struct PDF6D {
   int m_numOfRows;   //! no. of rows in spatial BTF index
   int m_numOfCols;   //! no. of columns in spatial BTF index
@@ -95,4 +95,4 @@ template <typename T> struct PDF6D {
     }
 #pragma endregion
 };
-} // namespace RayTracerFacility
+} // namespace EvoEngine

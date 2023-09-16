@@ -23,7 +23,7 @@
 #include "HitInfo.hpp"
 #include "VulkanInterlop.hpp"
 
-namespace RayTracerFacility {
+namespace EvoEngine {
 	enum class OutputType {
 		Color, Normal, Albedo, Depth
 	};
@@ -283,7 +283,7 @@ namespace RayTracerFacility {
 
 	struct RayTracedGeometry {
 		RendererType m_rendererType = RendererType::Default;
-		GeometryType m_geometryType = GeometryType::Triangle;
+		PrimitiveType m_geometryType = PrimitiveType::Triangle;
 		union {
 			std::vector<EvoEngine::Vertex>* m_vertices = nullptr;
 			std::vector<EvoEngine::SkinnedVertex>* m_skinnedVertices;
@@ -346,7 +346,7 @@ namespace RayTracerFacility {
 
 		OptixProgramGroup m_rayGenProgramGroups;
 		CudaBuffer m_rayGenRecordsBuffer;
-		std::map<RayType, std::map<GeometryType, OptixProgramGroup>> m_hitGroupProgramGroups;
+		std::map<RayType, std::map<PrimitiveType, OptixProgramGroup>> m_hitGroupProgramGroups;
 		CudaBuffer m_missRecordsBuffer;
 		std::map<RayType, OptixProgramGroup> m_missProgramGroups;
 		CudaBuffer m_hitGroupRecordsBuffer;
@@ -461,4 +461,4 @@ namespace RayTracerFacility {
 		friend class RayTracerCamera;
 	};
 
-} // namespace RayTracerFacility
+} // namespace EvoEngine

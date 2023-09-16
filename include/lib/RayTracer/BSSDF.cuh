@@ -2,7 +2,7 @@
 
 #include "RayTracerUtilities.cuh"
 
-namespace RayTracerFacility {
+namespace EvoEngine {
     struct SSHitRecord {
         glm::vec3 m_outPosition;
         glm::vec3 m_outNormal;

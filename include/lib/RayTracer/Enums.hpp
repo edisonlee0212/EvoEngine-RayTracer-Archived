@@ -1,5 +1,5 @@
 #pragma once
-namespace RayTracerFacility {
+namespace EvoEngine {
     enum class MaterialType {
         Default,
         VertexColor,
@@ -13,7 +13,7 @@ namespace RayTracerFacility {
         Curve
     };
 
-    enum class GeometryType {
+    enum class PrimitiveType {
         Custom,
         QuadraticBSpline,
         CubicBSpline,

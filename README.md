@@ -1,5 +1,5 @@
-# RayTracerFacility
-RayTracerFacility is a module of EvoEngine that provides a simple ray tracer with path tracing based on OptiX 7 and CUDA. It also provide per-triangle illumination estimator for meshes that is used on my procedural sorghum projects.
+# EvoEngine
+EvoEngine is a module of EvoEngine that provides a simple ray tracer with path tracing based on OptiX 7 and CUDA. It also provide per-triangle illumination estimator for meshes that is used on my procedural sorghum projects.
 
 ## Getting Started
 The project is a CMake project. For project editing, code inspections, Visual Studio 2017 or 2019 is recommanded. Simply clone/download the project files and open the folder as project in Visual Studio and you are ready.

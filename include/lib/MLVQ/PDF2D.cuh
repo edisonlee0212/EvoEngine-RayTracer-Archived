@@ -12,7 +12,7 @@
  * instead.
  */
 #define PDF2D PDF2DSeperate
-namespace RayTracerFacility {
+namespace EvoEngine {
     struct PDF2DSeperate {
         // the used number of 2D functions
         int m_numOfPdf2D;
@@ -142,4 +142,4 @@ namespace RayTracerFacility {
 #pragma endregion
     };
 
-} // namespace RayTracerFacility
+} // namespace EvoEngine

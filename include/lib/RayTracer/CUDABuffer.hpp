@@ -4,7 +4,7 @@
 #include "vector"
 
 struct cudaGraphicsResource;
-namespace RayTracerFacility {
+namespace EvoEngine {
 
 /*! simple wrapper for creating, and managing a device-side CUDA
         buffer */
@@ -44,4 +44,4 @@ template <typename T> void CudaBuffer::Upload(T *t, const size_t &count) {
 template <typename T> void CudaBuffer::Download(T *t, const size_t &count) {
   Download(static_cast<void *>(t), sizeof(T), count);
 }
-} // namespace RayTracerFacility
+} // namespace EvoEngine

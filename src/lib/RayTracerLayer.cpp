@@ -13,7 +13,7 @@
 #include "SkinnedMeshRenderer.hpp"
 #include "CompressedBTF.hpp"
 #include "Times.hpp"
-using namespace RayTracerFacility;
+using namespace EvoEngine;
 
 std::shared_ptr<RayTracerCamera> RayTracerLayer::m_rayTracerCamera;
 
@@ -67,7 +67,7 @@ void RayTracerLayer::UpdateMeshesStorage(std::unordered_map<uint64_t, RayTracedM
 				rayTracedGeometry.m_curveSegments = &strands->UnsafeGetSegments();
 				rayTracedGeometry.m_curvePoints = &strands->UnsafeGetStrandPoints();
 				rayTracedGeometry.m_version = strands->GetVersion();
-				rayTracedGeometry.m_geometryType = GeometryType::CubicBSpline;
+				rayTracedGeometry.m_geometryType = PrimitiveType::CubicBSpline;
 				rayTracedGeometry.m_handle = geometryHandle;
 			}
 			if (CheckMaterial(rayTracedMaterial, material)) needInstanceUpdate = true;
@@ -124,7 +124,7 @@ void RayTracerLayer::UpdateMeshesStorage(std::unordered_map<uint64_t, RayTracedM
 				rayTracedGeometry.m_triangles = &mesh->UnsafeGetTriangles();
 				rayTracedGeometry.m_vertices = &mesh->UnsafeGetVertices();
 				rayTracedGeometry.m_version = mesh->GetVersion();
-				rayTracedGeometry.m_geometryType = GeometryType::Triangle;
+				rayTracedGeometry.m_geometryType = PrimitiveType::Triangle;
 				rayTracedGeometry.m_handle = geometryHandle;
 			}
 			if (CheckMaterial(rayTracedMaterial, material)) needInstanceUpdate = true;
@@ -186,7 +186,7 @@ void RayTracerLayer::UpdateMeshesStorage(std::unordered_map<uint64_t, RayTracedM
 				|| true) {
 				rayTracedGeometry.m_updateFlag = true;
 				needInstanceUpdate = true;
-				rayTracedGeometry.m_geometryType = GeometryType::Triangle;
+				rayTracedGeometry.m_geometryType = PrimitiveType::Triangle;
 				rayTracedGeometry.m_rendererType = RendererType::Skinned;
 				rayTracedGeometry.m_triangles = &mesh->UnsafeGetTriangles();
 				rayTracedGeometry.m_skinnedVertices = &mesh->UnsafeGetSkinnedVertices();
@@ -250,7 +250,7 @@ void RayTracerLayer::UpdateMeshesStorage(std::unordered_map<uint64_t, RayTracedM
 				|| rayTracedGeometry.m_version != mesh->GetVersion()) {
 				rayTracedGeometry.m_updateFlag = true;
 				needInstanceUpdate = true;
-				rayTracedGeometry.m_geometryType = GeometryType::Triangle;
+				rayTracedGeometry.m_geometryType = PrimitiveType::Triangle;
 				rayTracedGeometry.m_rendererType = RendererType::Instanced;
 				rayTracedGeometry.m_triangles = &mesh->UnsafeGetTriangles();
 				rayTracedGeometry.m_vertices = &mesh->UnsafeGetVertices();
@@ -313,7 +313,7 @@ void RayTracerLayer::UpdateMeshesStorage(std::unordered_map<uint64_t, RayTracedM
 				rayTracedGeometry.m_triangles = &mesh->UnsafeGetTriangles();
 				rayTracedGeometry.m_vertices = &mesh->UnsafeGetVertices();
 				rayTracedGeometry.m_version = mesh->GetVersion();
-				rayTracedGeometry.m_geometryType = GeometryType::Triangle;
+				rayTracedGeometry.m_geometryType = PrimitiveType::Triangle;
 				rayTracedGeometry.m_handle = geometryHandle;
 			}
 			if (CheckCompressedBTF(rayTracedMaterial, material)) needInstanceUpdate = true;

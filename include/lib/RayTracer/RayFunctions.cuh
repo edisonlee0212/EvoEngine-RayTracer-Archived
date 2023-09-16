@@ -3,7 +3,7 @@
 #include "BSDF.cuh"
 #include "BSSDF.cuh"
 #include "Environment.cuh"
-namespace RayTracerFacility {
+namespace EvoEngine {
     static __forceinline__ __device__ void AnyHitFunc() {
         const float3 rayDirectionInternal = optixGetWorldRayDirection();
         glm::vec3 rayDirection = glm::vec3(

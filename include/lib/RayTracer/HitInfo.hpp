@@ -1,5 +1,5 @@
 #pragma once;
-namespace RayTracerFacility {
+namespace EvoEngine {
     struct HitInfo {
         glm::vec3 m_position = glm::vec3(0.0f);
         glm::vec3 m_normal = glm::vec3(0.0f);

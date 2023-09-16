@@ -3,7 +3,7 @@
 #include "Optix7.hpp"
 #include "SharedCoordinates.cuh"
 
-namespace RayTracerFacility {
+namespace EvoEngine {
 /*! YCbCr to RGB space */
     __device__ inline void YCbCrToRgb(const glm::vec3 &yCbCr, glm::vec3 &rgb) {
         assert(yCbCr[0] >= 0.f);
@@ -184,4 +184,4 @@ namespace RayTracerFacility {
             YCbCrToRgb(userColorModelData, rgb);
         }
     }
-} // namespace RayTracerFacility
+} // namespace EvoEngine

@@ -8,7 +8,7 @@
 
 #include <glm/glm.hpp>
 
-using namespace RayTracerFacility;
+using namespace EvoEngine;
 
 CUdeviceptr CudaBuffer::DevicePointer() const {
     return reinterpret_cast<CUdeviceptr>(m_dPtr);

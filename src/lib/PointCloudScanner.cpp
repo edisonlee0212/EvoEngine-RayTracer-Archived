@@ -8,7 +8,7 @@
 #include "Jobs.hpp"
 #include "RayTracerLayer.hpp"
 #include "Graphics.hpp"
-using namespace RayTracerFacility;
+using namespace EvoEngine;
 
 void PointCloudScanner::OnInspect(const std::shared_ptr<EditorLayer>& editorLayer) {
     ImGui::DragFloat("Angle", &m_rotateAngle, 0.1f, -90.0f, 90.0f);

@@ -10,7 +10,7 @@
 #include "Application.hpp"
 #include "Scene.hpp"
 #include "TransformGraph.hpp"
-using namespace RayTracerFacility;
+using namespace EvoEngine;
 
 void RayTracerCamera::Ready(const glm::vec3 &position, const glm::quat &rotation) {
     if (m_cameraProperties.m_frame.m_size != m_frameSize) {

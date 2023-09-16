@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-namespace RayTracerFacility {
+namespace EvoEngine {
 /*! simple 24-bit linear congruence generator */
 template <unsigned int N = 16> struct LinearCongruenceGenerator {
   __device__
@@ -35,4 +35,4 @@ template <unsigned int N = 16> struct LinearCongruenceGenerator {
   uint32_t state;
 };
 
-} // namespace RayTracerFacility
+} // namespace EvoEngine

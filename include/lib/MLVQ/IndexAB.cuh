@@ -2,7 +2,7 @@
 #include "SharedCoordinates.cuh"
 #include "VectorColor.cuh"
 
-namespace RayTracerFacility {
+namespace EvoEngine {
     struct IndexAB {
         // current number of stored 1D index slices
         int m_numOfIndexSlices;
@@ -43,4 +43,4 @@ namespace RayTracerFacility {
         }
 #pragma endregion
     };
-} // namespace RayTracerFacility
+} // namespace EvoEngine

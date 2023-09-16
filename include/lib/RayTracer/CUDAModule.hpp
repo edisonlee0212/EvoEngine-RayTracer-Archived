@@ -16,7 +16,7 @@ namespace EvoEngine
 }
 
 struct cudaGraphicsResource;
-namespace RayTracerFacility {
+namespace EvoEngine {
     class CudaModule {
 #pragma region Class related
 
@@ -59,4 +59,4 @@ namespace RayTracerFacility {
         static std::shared_ptr<CudaImage> ImportRenderTexture(const std::shared_ptr<EvoEngine::RenderTexture>& renderTexture);
         static std::shared_ptr<CudaSemaphore> ImportSemaphore(const std::shared_ptr<EvoEngine::Semaphore>& semaphore);
     };
-} // namespace RayTracerFacility
+} // namespace EvoEngine

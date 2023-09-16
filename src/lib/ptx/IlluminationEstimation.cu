@@ -1,6 +1,6 @@
 ﻿#include "RayFunctions.cuh"
 
-namespace RayTracerFacility {
+namespace EvoEngine {
 	extern "C" __constant__ IlluminationEstimationLaunchParams
 					illuminationEstimationLaunchParams;
 #pragma region Closest hit functions
@@ -128,4 +128,4 @@ namespace RayTracerFacility {
 			}
 	}
 #pragma endregion
-} // namespace RayTracerFacility
+} // namespace EvoEngine

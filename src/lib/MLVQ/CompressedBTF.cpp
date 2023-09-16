@@ -72,7 +72,7 @@ std::string LoadFileAsString(const std::string &path) {
     }
 }
 
-using namespace RayTracerFacility;
+using namespace EvoEngine;
 
 bool CompressedBTF::ImportFromFolder(const std::filesystem::path &path) {
     auto materialDirectoryPath = path.string();

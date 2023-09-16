@@ -2,7 +2,7 @@
 
 #include "CUDABuffer.hpp"
 #include "glm/glm.hpp"
-namespace RayTracerFacility {
+namespace EvoEngine {
     struct SharedCoordinates {
         // false ... use uniform distribution in Beta
         // true ... use uniform distribution in cos(Beta)
@@ -162,4 +162,4 @@ namespace RayTracerFacility {
         const float aux = glm::clamp(xyz[1] / cosBeta, -1.0f, 1.0f);
         alpha = glm::asin(aux);
     }
-} // namespace RayTracerFacility
+} // namespace EvoEngine

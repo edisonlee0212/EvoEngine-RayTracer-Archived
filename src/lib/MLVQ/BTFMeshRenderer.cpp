@@ -4,7 +4,7 @@
 
 #include "BTFMeshRenderer.hpp"
 
-using namespace RayTracerFacility;
+using namespace EvoEngine;
 
 #include "EditorLayer.hpp"
 #include "CompressedBTF.hpp"

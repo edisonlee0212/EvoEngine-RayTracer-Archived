@@ -2,7 +2,7 @@
 
 #include <LinearCongruenceGenerator.hpp>
 
-#include <glm/glm.hpp>
+#include "glm/glm.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/vector_angle.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -20,7 +20,7 @@
 #include <Optix7.hpp>
 #include <RayDataDefinations.hpp>
 
-namespace RayTracerFacility {
+namespace EvoEngine {
     typedef LinearCongruenceGenerator<16> Random;
 #pragma region Data
     template<typename T>
@@ -158,4 +158,4 @@ namespace RayTracerFacility {
 
 #pragma endregion
 
-} // namespace RayTracerFacility
+} // namespace EvoEngine

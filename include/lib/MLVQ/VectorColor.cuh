@@ -1,7 +1,7 @@
 #pragma once
 #include "SharedCoordinates.cuh"
 
-namespace RayTracerFacility {
+namespace EvoEngine {
     struct VectorColor {
         // the index from which we start the search
         int m_startIndex;
@@ -28,4 +28,4 @@ namespace RayTracerFacility {
         }
 #pragma endregion
     };
-} // namespace RayTracerFacility
+} // namespace EvoEngine

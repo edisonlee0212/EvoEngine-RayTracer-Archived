@@ -1,7 +1,7 @@
 #pragma once
 #include "RayTracerUtilities.cuh"
 
-namespace RayTracerFacility {
+namespace EvoEngine {
 
     static __forceinline__ __device__ void
     BRDF(float metallic, Random &random, const glm::vec3 &inDirection, const glm::vec3 &inNormal,

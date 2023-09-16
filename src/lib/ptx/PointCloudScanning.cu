@@ -1,6 +1,6 @@
 #include <RayTracerUtilities.cuh>
 
-namespace RayTracerFacility {
+namespace EvoEngine {
     extern "C" __constant__ PointCloudScanningLaunchParams
             pointCloudScanningLaunchParams;
 
@@ -74,4 +74,4 @@ namespace RayTracerFacility {
         samples.m_hitInfo = perRayData.m_hitInfo;
     }
 #pragma endregion
-} // namespace RayTracerFacility
+} // namespace EvoEngine

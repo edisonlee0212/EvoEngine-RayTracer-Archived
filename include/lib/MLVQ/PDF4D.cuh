@@ -5,7 +5,7 @@
 #include "SharedCoordinates.cuh"
 #include "glm/glm.hpp"
 
-namespace RayTracerFacility {
+namespace EvoEngine {
     template<typename T>
     struct PDF4D {
         // the used number of 4D functions
@@ -63,4 +63,4 @@ namespace RayTracerFacility {
         }
 #pragma endregion
     };
-} // namespace RayTracerFacility
+} // namespace EvoEngine

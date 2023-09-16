@@ -16,7 +16,7 @@
 #include "RenderTexture.hpp"
 #include "Graphics.hpp"
 #include "VulkanInterlop.hpp"
-using namespace RayTracerFacility;
+using namespace EvoEngine;
 
 std::unique_ptr<RayTracer>& CudaModule::GetRayTracer() {
 	return GetInstance().m_rayTracer;

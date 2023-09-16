@@ -4,7 +4,7 @@
 #include "PDF2D.cuh"
 #include "SharedCoordinates.cuh"
 
-namespace RayTracerFacility {
+namespace EvoEngine {
     template<typename T>
     struct PDF3D {
         // the used number of 3D functions
@@ -47,4 +47,4 @@ namespace RayTracerFacility {
 
 #pragma endregion
     };
-} // namespace RayTracerFacility
+} // namespace EvoEngine
