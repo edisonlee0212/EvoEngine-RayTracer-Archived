@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.17)
 project(
-        RayTracerFacility
+        EvoEngine-RayTracer
         VERSION 0.1
         DESCRIPTION "An implementation of MLVQ library in CUDA with OptiX ray tracer."
 )
-option(BUILD_RAY_TRACER_FACILITY "Build Ray Tracer Facility" ON)
+option(BUILD_RAYTRACER "Build Ray Tracer" ON)
 include(GenerateExportHeader)
 
 # Set a default build type if none was specified
@@ -22,7 +22,7 @@ endif ()
 # ------------------------------------------------------------------
 # 3rd Party libraries
 # ------------------------------------------------------------------
-if (BUILD_RAY_TRACER_FACILITY)
+if (BUILD_RAYTRACER)
     if (NOT WIN32)
         set(OptiX_INSTALL_DIR "~/NVIDIA-OptiX-SDK-7.4.0-linux64-x86_64")
     endif ()
@@ -39,7 +39,7 @@ endif ()
 include_directories(${EVOENGINE_INCLUDES})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-if (BUILD_RAY_TRACER_FACILITY)
+if (BUILD_RAYTRACER)
     include(${CMAKE_MODULE_PATH}/configure_build_type.cmake)
     include(${CMAKE_MODULE_PATH}/configure_optix.cmake)
     mark_as_advanced(CUDA_SDK_ROOT_DIR)
@@ -51,16 +51,16 @@ endif ()
 # ------------------------------------------------------------------
 
 set(CMAKE_CXX_STANDARD 17)
-if (BUILD_RAY_TRACER_FACILITY)
+if (BUILD_RAYTRACER)
     enable_language(CUDA)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/lib/MLVQ)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/lib/RayTracer)
 
-    file(GLOB RAY_TRACER_FACILITY_SOURCES_LOCAL
+    file(GLOB LOCAL_EVOENGINE_RAYTRACER_SOURCES
             "src/lib/*.cpp"
             "src/lib/MLVQ/*.cpp"
             )
-    file(GLOB RAY_TRACER_FACILITY_CUDA_SOURCES_LOCAL
+    file(GLOB EVOENGINE_RAYTRACER_CUDA_SOURCES_LOCAL
             "src/lib/*.cu"
             )
 
@@ -68,7 +68,7 @@ if (BUILD_RAY_TRACER_FACILITY)
     cuda_compile_and_embed(ILLUMINATION_ESTIMATION_PTX ${CMAKE_CURRENT_SOURCE_DIR}/src/lib/ptx/IlluminationEstimation.cu)
     cuda_compile_and_embed(POINT_CLOUD_SCANNING_PTX ${CMAKE_CURRENT_SOURCE_DIR}/src/lib/ptx/PointCloudScanning.cu)
 
-    add_library(raytracerfacility
+    add_library(evoengine-raytracer
             STATIC
             #Default
             ${CAMERA_RENDERING_PTX}
@@ -76,13 +76,13 @@ if (BUILD_RAY_TRACER_FACILITY)
             ${POINT_CLOUD_SCANNING_PTX}
 
             #C++
-            ${RAY_TRACER_FACILITY_SOURCES_LOCAL}
-            ${RAY_TRACER_FACILITY_CUDA_SOURCES_LOCAL}
+            ${LOCAL_EVOENGINE_RAYTRACER_SOURCES}
+            ${EVOENGINE_RAYTRACER_CUDA_SOURCES_LOCAL}
             ${CMAKE_MODULE_PATH}/configure_optix.cmake
             ${CMAKE_MODULE_PATH}/FindOptiX.cmake
             )
 
-    set_property(TARGET raytracerfacility PROPERTY CUDA_ARCHITECTURES 61-real 61-virtual)
+    set_property(TARGET evoengine-raytracer PROPERTY CUDA_ARCHITECTURES 61-real 61-virtual)
 
     if (NOT WIN32)
         message(STATUS CUDALIB=${CUDA_TOOLKIT_ROOT_DIR})
@@ -92,13 +92,13 @@ if (BUILD_RAY_TRACER_FACILITY)
     message(STATUS CUDA_LIBRARIES:${CUDA_LIBRARIES})
     message(STATUS CUDA_CUDA_LIBRARY:${CUDA_CUDA_LIBRARY})
     # Linker settings for all platforms
-    target_link_libraries(raytracerfacility
+    target_link_libraries(evoengine-raytracer
             evoengine
             ${CUDA_LIBRARIES}
             ${CUDA_CUDA_LIBRARY}
             )
 
-    set(RAY_TRACER_FACILITY_INCLUDES_LOCAL
+    set(LOCAL_EVOENGINE_RAYTRACER_INCLUDES
             ${OptiX_INCLUDE}
             ${EVOENGINE_INCLUDES}
             ${CMAKE_CURRENT_BINARY_DIR}
@@ -109,9 +109,9 @@ if (BUILD_RAY_TRACER_FACILITY)
             ${CMAKE_CURRENT_SOURCE_DIR}/include/lib/Utilities
             )
 
-    target_include_directories(raytracerfacility
+    target_include_directories(evoengine-raytracer
             PRIVATE
-            ${RAY_TRACER_FACILITY_INCLUDES_LOCAL}
+            ${LOCAL_EVOENGINE_RAYTRACER_INCLUDES}
             )
     if (WIN32)
         set(CUDA_PROPAGATE_HOST_FLAGS ON)
@@ -141,18 +141,18 @@ if (${CMAKE_BINARY_DIR} STREQUAL ${PROJECT_BINARY_DIR})
             PRIVATE
             ${EVOENGINE_PCH}
             )
-    if (BUILD_RAY_TRACER_FACILITY)
+    if (BUILD_RAYTRACER)
         target_include_directories(Application
                 PRIVATE
-                ${RAY_TRACER_FACILITY_INCLUDES_LOCAL}
+                ${LOCAL_EVOENGINE_RAYTRACER_INCLUDES}
                 )
         target_link_libraries(Application
                 evoengine
-                raytracerfacility
+                evoengine-raytracer
                 )
         target_compile_definitions(Application
                 PRIVATE
-                RAYTRACERFACILITY
+                BUILD_RAYTRACER
                 )
     else ()
     endif ()
@@ -161,8 +161,8 @@ endif ()
 # Copy Internal resources
 # ------------------------------------------------------------------
 file(COPY src/app/imgui.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-if (BUILD_RAY_TRACER_FACILITY)
+if (BUILD_RAYTRACER)
     if (NOT ${CMAKE_BINARY_DIR} STREQUAL ${PROJECT_BINARY_DIR})
-        set(RAY_TRACER_FACILITY_INCLUDES ${RAY_TRACER_FACILITY_INCLUDES_LOCAL} PARENT_SCOPE)
+        set(RAYTRACER_FACILITY_INCLUDES ${LOCAL_EVOENGINE_RAYTRACER_INCLUDES} PARENT_SCOPE)
     endif ()
 endif ()

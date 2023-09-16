@@ -4,16 +4,15 @@
 #include <Application.hpp>
 #include <EditorLayer.hpp>
 #include "WindowLayer.hpp"
-#include "PhysicsLayer.hpp"
 #include "RenderLayer.hpp"
-#ifdef RAYTRACERFACILITY
+#ifdef BUILD_RAYTRACER
 #include <RayTracerLayer.hpp>
 #include "BTFMeshRenderer.hpp"
 #include "TriangleIlluminationEstimator.hpp"
 #endif
 
 
-#ifdef RAYTRACERFACILITY
+#ifdef BUILD_RAYTRACER
 using namespace RayTracerFacility;
 #endif
 
@@ -22,10 +21,9 @@ int main() {
     ApplicationInfo applicationInfo;
 
     Application::PushLayer<WindowLayer>();
-    //Application::PushLayer<PhysicsLayer>();
     Application::PushLayer<EditorLayer>();
     Application::PushLayer<RenderLayer>();
-#ifdef RAYTRACERFACILITY
+#ifdef BUILD_RAYTRACER
     Application::PushLayer<RayTracerLayer>();
 #endif
     Application::Initialize(applicationInfo);
