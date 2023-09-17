@@ -30,19 +30,29 @@
 
 # Our initial guess will be within the SDK.
 #set(OptiX_INSTALL_DIR "C:/ProgramData/NVIDIA Corporation/OptiX SDK 7.6.0" CACHE PATH "Path to OptiX installed location.")
-find_path(searched_OptiX_INSTALL_DIR
-        NAME include/optix.h
-        PATHS
-        "C:/ProgramData/NVIDIA Corporation/OptiX SDK 7.9.0"
-        "C:/ProgramData/NVIDIA Corporation/OptiX SDK 7.8.0"
-        "C:/ProgramData/NVIDIA Corporation/OptiX SDK 7.7.0"
-        "C:/ProgramData/NVIDIA Corporation/OptiX SDK 7.6.0"
-        "C:/ProgramData/NVIDIA Corporation/OptiX SDK 7.5.0"
-        "C:/ProgramData/NVIDIA Corporation/OptiX SDK 7.4.0"
-        "C:/ProgramData/NVIDIA Corporation/OptiX SDK 7.3.0"
-        "C:/ProgramData/NVIDIA Corporation/OptiX SDK 7.2.0"
-        "C:/ProgramData/NVIDIA Corporation/OptiX SDK 7.1.0"
-        )
+if(NOT WIN32)
+	find_path(searched_OptiX_INSTALL_DIR
+        	NAME include/optix.h
+        	PATHS
+        	~NVIDIA-OptiX-SDK-8.0.0-linux64-x86_64
+        	~NVIDIA-OptiX-SDK-7.9.0-linux64-x86_64
+        	~NVIDIA-OptiX-SDK-7.8.0-linux64-x86_64
+		~NVIDIA-OptiX-SDK-7.7.0-linux64-x86_64
+		~NVIDIA-OptiX-SDK-7.6.0-linux64-x86_64
+		~NVIDIA-OptiX-SDK-7.5.0-linux64-x86_64
+        	)
+else()
+	find_path(searched_OptiX_INSTALL_DIR
+        	NAME include/optix.h
+        	PATHS
+		"C:/ProgramData/NVIDIA Corporation/OptiX SDK 8.0.0"
+        	"C:/ProgramData/NVIDIA Corporation/OptiX SDK 7.9.0"
+        	"C:/ProgramData/NVIDIA Corporation/OptiX SDK 7.8.0"
+        	"C:/ProgramData/NVIDIA Corporation/OptiX SDK 7.7.0"
+        	"C:/ProgramData/NVIDIA Corporation/OptiX SDK 7.6.0"
+        	"C:/ProgramData/NVIDIA Corporation/OptiX SDK 7.5.0"
+        	)
+endif()
 mark_as_advanced(searched_OptiX_INSTALL_DIR)
 set(OptiX_INSTALL_DIR ${searched_OptiX_INSTALL_DIR} CACHE PATH "Path to OptiX installed location.")
 # The distribution contains only 64 bit libraries.  Error when we have been mis-configured.

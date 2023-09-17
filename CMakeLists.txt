@@ -18,10 +18,6 @@ endif ()
 # ------------------------------------------------------------------
 # 3rd Party libraries
 # ------------------------------------------------------------------
-if (NOT WIN32)
-	set(OptiX_INSTALL_DIR "~/NVIDIA-OptiX-SDK-7.4.0-linux64-x86_64")
-endif ()
-
 # We need a CMAKE_DIR with some code to find external dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 
