@@ -85,8 +85,9 @@ message(STATUS CUDA_CUDA_LIBRARY:${CUDA_CUDA_LIBRARY})
 # Linker settings for all platforms
 target_link_libraries(evoengine-raytracer
 	evoengine
-	${CUDA_LIBRARIES}
-	${CUDA_CUDA_LIBRARY}
+	cuda
+	#${CUDA_LIBRARIES}
+	#${CUDA_CUDA_LIBRARY}
 	)
 
 set(LOCAL_EVOENGINE_RAYTRACER_INCLUDES
