@@ -386,7 +386,6 @@ bool RayTracer::RenderToCamera(const EnvironmentProperties &environmentPropertie
         }
         else {
             OptixDenoiserParams denoiserParams;
-            denoiserParams.denoiseAlpha = OptixDenoiserAlphaMode::OPTIX_DENOISER_ALPHA_MODE_FULL_DENOISE_PASS;
             m_cameraRenderingLaunchParams.m_cameraProperties.m_denoiserIntensity.Resize(sizeof(float));
             if (m_cameraRenderingLaunchParams.m_cameraProperties.m_denoiserIntensity.m_sizeInBytes !=
                 sizeof(float))

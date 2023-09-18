@@ -10,6 +10,7 @@
 #include "Material.hpp"
 using namespace EvoEngine;
 namespace EvoEngine {
+    class RayTracerCamera;
     class RayTracerLayer : public ILayer {
     protected:
         void UpdateMeshesStorage(std::unordered_map<uint64_t, RayTracedMaterial> &materialStorage,
