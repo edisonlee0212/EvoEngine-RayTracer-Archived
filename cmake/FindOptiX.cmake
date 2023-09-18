@@ -34,12 +34,12 @@ if(NOT WIN32)
 	find_path(searched_OptiX_INSTALL_DIR
         	NAME include/optix.h
         	PATHS
-        	~NVIDIA-OptiX-SDK-8.0.0-linux64-x86_64
-        	~NVIDIA-OptiX-SDK-7.9.0-linux64-x86_64
-        	~NVIDIA-OptiX-SDK-7.8.0-linux64-x86_64
-		~NVIDIA-OptiX-SDK-7.7.0-linux64-x86_64
-		~NVIDIA-OptiX-SDK-7.6.0-linux64-x86_64
-		~NVIDIA-OptiX-SDK-7.5.0-linux64-x86_64
+        	~/NVIDIA-OptiX-SDK-8.0.0-linux64-x86_64
+        	~/NVIDIA-OptiX-SDK-7.9.0-linux64-x86_64
+        	~/NVIDIA-OptiX-SDK-7.8.0-linux64-x86_64
+		~/NVIDIA-OptiX-SDK-7.7.0-linux64-x86_64
+		~/NVIDIA-OptiX-SDK-7.6.0-linux64-x86_64
+		~/NVIDIA-OptiX-SDK-7.5.0-linux64-x86_64
         	)
 else()
 	find_path(searched_OptiX_INSTALL_DIR
