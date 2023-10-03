@@ -83,13 +83,18 @@ message(STATUS CUDA_LIBRARIES:${CUDA_LIBRARIES})
 message(STATUS CUDA_CUDA_LIBRARY:${CUDA_CUDA_LIBRARY})
 
 # Linker settings for all platforms
-target_link_libraries(evoengine-raytracer
-	evoengine
-	cuda
-	#${CUDA_LIBRARIES}
-	#${CUDA_CUDA_LIBRARY}
+if (NOT WIN32)
+	target_link_libraries(evoengine-raytracer
+		evoengine
+		cuda
 	)
-
+else()
+	target_link_libraries(evoengine-raytracer
+		evoengine
+		${CUDA_LIBRARIES}
+		${CUDA_CUDA_LIBRARY}
+	)
+endif ()
 set(LOCAL_EVOENGINE_RAYTRACER_INCLUDES
 	${OptiX_INCLUDE}
 	${EVOENGINE_INCLUDES}
