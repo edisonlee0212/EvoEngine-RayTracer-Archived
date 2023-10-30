@@ -567,7 +567,7 @@ void RayTracerLayer::SceneCameraWindow() {
 				isDraggingPreviously = mouseDrag;
 				if (mouseDrag && !editorLayer->m_lockCamera) {
 
-					const glm::vec3 front =
+					glm::vec3 front =
 						sceneCameraRotation *
 						glm::vec3(0, 0, -1);
 					const glm::vec3 right =
@@ -604,20 +604,13 @@ void RayTracerLayer::SceneCameraWindow() {
 							static_cast<float>(Times::DeltaTime());
 					}
 					if (xOffset != 0.0f || yOffset != 0.0f) {
-						editorLayer->m_sceneCameraYawAngle +=
-							xOffset * editorLayer->m_sensitivity;
-						editorLayer->m_sceneCameraPitchAngle -=
-							yOffset * editorLayer->m_sensitivity;
-						if (editorLayer->m_sceneCameraPitchAngle > 89.0f)
-							editorLayer->m_sceneCameraPitchAngle = 89.0f;
-						if (editorLayer->m_sceneCameraPitchAngle < -89.0f)
-							editorLayer->m_sceneCameraPitchAngle = -89.0f;
-
-						sceneCameraRotation =
-							Camera::ProcessMouseMovement(
-								editorLayer->m_sceneCameraYawAngle,
-								editorLayer->m_sceneCameraPitchAngle,
-								false);
+						front = glm::rotate(front, glm::radians(-xOffset * editorLayer->m_sensitivity), glm::vec3(0, 1, 0));
+						const glm::vec3 right = glm::normalize(glm::cross(front, glm::vec3(0.0f, 1.0f, 0.0f)));
+						if ((front.y < 0.99f && yOffset < 0.0f) || (front.y > -0.99f && yOffset > 0.0f)) {
+							front = glm::rotate(front, glm::radians(-yOffset * editorLayer->m_sensitivity), right);
+						}
+						const glm::vec3 up = glm::normalize(glm::cross(right, front));
+						sceneCameraRotation = glm::quatLookAt(front, up);
 					}
 					editorLayer->SetCameraPosition(editorLayer->GetSceneCamera(), sceneCameraPosition);
 					editorLayer->SetCameraRotation(editorLayer->GetSceneCamera(), sceneCameraRotation);
