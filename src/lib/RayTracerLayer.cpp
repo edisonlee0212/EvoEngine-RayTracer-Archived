@@ -617,7 +617,7 @@ void RayTracerLayer::SceneCameraWindow() {
 				}
 #pragma endregion
 			}
-
+			/*
 #pragma region Gizmos and Entity Selection
 			bool mouseSelectEntity = true;
 			auto selectedEntity = editorLayer->GetSelectedEntity();
@@ -660,6 +660,7 @@ void RayTracerLayer::SceneCameraWindow() {
 				}
 			}
 #pragma endregion
+			*/
 		}
 		ImGui::EndChild();
 		auto* window = ImGui::FindWindowByName("Scene (Ray)");
