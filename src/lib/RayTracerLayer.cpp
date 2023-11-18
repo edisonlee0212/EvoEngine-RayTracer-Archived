@@ -461,15 +461,31 @@ void RayTracerLayer::PreUpdate() {
 void RayTracerLayer::OnInspect(const std::shared_ptr<EditorLayer>& editorLayer) {
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("View")) {
-			ImGui::Checkbox("Ray Tracer", &m_showRayTracerWindow);
-			ImGui::Checkbox("Scene (Ray)", &m_showSceneWindow);
-			ImGui::Checkbox("Camera (Ray)", &m_showCameraWindow);
+			if (ImGui::BeginMenu("Editor"))
+			{
+				if (ImGui::BeginMenu("Scene"))
+				{
+					ImGui::Checkbox("Show Scene (RT) Window", &m_showSceneWindow);
+					if (m_showSceneWindow)
+					{
+						ImGui::Checkbox("Show Scene (RT) Window Info", &m_showSceneInfo);
+					}
+					ImGui::EndMenu();
+				}
+				if (ImGui::BeginMenu("Camera"))
+				{
+					ImGui::Checkbox("Show Camera (RT) Window", &m_showCameraWindow);
+					ImGui::EndMenu();
+				}
+				ImGui::Checkbox("Ray Tracer Settings", &m_showRayTracerSettingsWindow);
+				ImGui::EndMenu();
+			}
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
 	}
-	if (m_showRayTracerWindow) {
-		if (ImGui::Begin("Ray Tracer")) {
+	if (m_showRayTracerSettingsWindow) {
+		if (ImGui::Begin("Ray Tracer Settings")) {
 			ImGui::Checkbox("Mesh Renderer", &m_renderMeshRenderer);
 			ImGui::Checkbox("Strand Renderer", &m_renderStrandsRenderer);
 			ImGui::Checkbox("Particles", &m_renderParticles);
@@ -500,7 +516,7 @@ void RayTracerLayer::SceneCameraWindow() {
 	auto sceneCameraPosition = editorLayer->GetSceneCameraPosition();
 	const auto scene = GetScene();
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-	if (ImGui::Begin("Scene (Ray)")) {
+	if (ImGui::Begin("Scene (RT)")) {
 		if (ImGui::BeginChild("RaySceneRenderer", ImVec2(0, 0), false)) {
 			static int corner = 1;
 			const ImVec2 overlayPos = ImGui::GetWindowPos();
@@ -617,53 +633,9 @@ void RayTracerLayer::SceneCameraWindow() {
 				}
 #pragma endregion
 			}
-			/*
-#pragma region Gizmos and Entity Selection
-			bool mouseSelectEntity = true;
-			auto selectedEntity = editorLayer->GetSelectedEntity();
-			if (scene->IsEntityValid(selectedEntity)) {
-				ImGuizmo::SetOrthographic(false);
-				ImGuizmo::SetDrawlist();
-				ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, viewPortSize.x, viewPortSize.y - 20);
-				glm::mat4 cameraView =
-					glm::inverse(glm::translate(sceneCameraPosition) *
-						glm::mat4_cast(sceneCameraRotation));
-				glm::mat4 cameraProjection = m_sceneCamera->GetProjection();
-				const auto op = editorLayer->LocalPositionSelected() ? ImGuizmo::OPERATION::TRANSLATE
-					: editorLayer->LocalRotationSelected()
-					? ImGuizmo::OPERATION::ROTATE
-					: ImGuizmo::OPERATION::SCALE;
-
-				auto transform = scene->GetDataComponent<Transform>(selectedEntity);
-				GlobalTransform parentGlobalTransform;
-				Entity parentEntity = scene->GetParent(selectedEntity);
-				if (parentEntity.GetIndex() != 0) {
-					parentGlobalTransform = scene->GetDataComponent<GlobalTransform>(
-						scene->GetParent(selectedEntity));
-				}
-				auto globalTransform = scene->GetDataComponent<GlobalTransform>(selectedEntity);
-
-				ImGuizmo::Manipulate(
-					glm::value_ptr(cameraView),
-					glm::value_ptr(cameraProjection),
-					op,
-					ImGuizmo::LOCAL,
-					glm::value_ptr(globalTransform.m_value));
-				if (ImGuizmo::IsUsing()) {
-					transform.m_value = glm::inverse(parentGlobalTransform.m_value) * globalTransform.m_value;
-					scene->SetDataComponent(selectedEntity, transform);
-					transform.Decompose(
-						editorLayer->UnsafeGetPreviouslyStoredPosition(),
-						editorLayer->UnsafeGetPreviouslyStoredRotation(),
-						editorLayer->UnsafeGetPreviouslyStoredScale());
-					mouseSelectEntity = false;
-				}
-			}
-#pragma endregion
-			*/
 		}
 		ImGui::EndChild();
-		auto* window = ImGui::FindWindowByName("Scene (Ray)");
+		auto* window = ImGui::FindWindowByName("Scene (RT)");
 		m_renderingEnabled = !(window->Hidden && !window->Collapsed);
 	}
 	ImGui::End();
@@ -674,7 +646,7 @@ void RayTracerLayer::RayCameraWindow() {
 	auto editorLayer = Application::GetLayer<EditorLayer>();
 	if (!editorLayer) return;
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-	if (ImGui::Begin("Camera (Ray)")) {
+	if (ImGui::Begin("Camera (RT)")) {
 		if (ImGui::BeginChild("RayCameraRenderer", ImVec2(0, 0), false,
 			ImGuiWindowFlags_None | ImGuiWindowFlags_MenuBar)) {
 			ImVec2 viewPortSize = ImGui::GetWindowSize();
@@ -702,7 +674,7 @@ void RayTracerLayer::RayCameraWindow() {
 void RayTracerLayer::Update() {
 	if (m_showCameraWindow) {
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-		if (ImGui::Begin("Camera (Ray)")) {
+		if (ImGui::Begin("Camera (RT)")) {
 			if (ImGui::BeginChild("RayCameraRenderer", ImVec2(0, 0), false,
 				ImGuiWindowFlags_None | ImGuiWindowFlags_MenuBar)) {
 				if (m_rayTracerCamera && m_rayTracerCamera->m_rendered && ImGui::IsWindowFocused()) {
