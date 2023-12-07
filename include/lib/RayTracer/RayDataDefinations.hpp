@@ -152,13 +152,16 @@ namespace EvoEngine {
             auto z = 1.f - triangleBarycentrics.x - triangleBarycentrics.y;
             if (triangleBarycentrics.x > z && triangleBarycentrics.x > triangleBarycentrics.y) {
                 hitInfo.m_color = vx.m_color;
-                hitInfo.m_data = glm::vec4(vx.m_positionPadding, vx.m_normalPadding, vx.m_tangentPadding, vx.m_texCoordPadding.x);
+                hitInfo.m_data = glm::vec3(vx.m_vertexInfo1, vx.m_vertexInfo2, vx.m_vertexInfo3);
+                hitInfo.m_data2 = vx.m_vertexInfo4;
             } else if (triangleBarycentrics.y > z) {
                 hitInfo.m_color = vy.m_color;
-                hitInfo.m_data = glm::vec4(vy.m_positionPadding, vy.m_normalPadding, vy.m_tangentPadding, vy.m_texCoordPadding.x);
+                hitInfo.m_data = glm::vec3(vy.m_vertexInfo1, vy.m_vertexInfo2, vy.m_vertexInfo3);
+                hitInfo.m_data2 = vy.m_vertexInfo4;
             } else {
                 hitInfo.m_color = vz.m_color;
-                hitInfo.m_data = glm::vec4(vz.m_positionPadding, vz.m_normalPadding, vz.m_tangentPadding, vz.m_texCoordPadding.x);
+                hitInfo.m_data = glm::vec3(vz.m_vertexInfo1, vz.m_vertexInfo2, vz.m_vertexInfo3);
+                hitInfo.m_data2 = vz.m_vertexInfo4;
             }
             return hitInfo;
         }

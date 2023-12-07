@@ -913,18 +913,12 @@ CopyVerticesInstancedKernel(int matricesSize, int verticesSize, InstanceMatrix *
         glm::vec3 T = glm::normalize(matrices[idx / verticesSize].m_instanceMatrix *
                                      glm::vec4(vertices[idx % verticesSize].m_tangent, 0.0f));
         T = glm::normalize(T - dot(T, N) * N);
-
+        targetVertices[idx] = {};
         targetVertices[idx].m_position = position;
         targetVertices[idx].m_tangent = T;
         targetVertices[idx].m_normal = N;
         targetVertices[idx].m_texCoord = vertices[idx % verticesSize].m_texCoord;
-        targetVertices[idx].m_color = vertices[idx % verticesSize].m_color;
-
-        targetVertices[idx].m_positionPadding = matrices[idx / verticesSize].m_instanceColor.x;
-        targetVertices[idx].m_normalPadding = matrices[idx / verticesSize].m_instanceColor.y;
-        targetVertices[idx].m_tangentPadding = matrices[idx / verticesSize].m_instanceColor.z;
-        targetVertices[idx].m_texCoordPadding.x = matrices[idx / verticesSize].m_instanceColor.w;
-        targetVertices[idx].m_texCoordPadding.y = idx / verticesSize;
+        targetVertices[idx].m_color = matrices[idx / verticesSize].m_instanceColor;
     }
 }
 
