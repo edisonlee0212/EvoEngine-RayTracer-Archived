@@ -16,7 +16,7 @@ namespace EvoEngine {
     enum class PrimitiveType {
         Custom,
         QuadraticBSpline,
-        CubicBSpline,
+        CubicBezier,
         Linear,
         CatmullRom,
         Triangle

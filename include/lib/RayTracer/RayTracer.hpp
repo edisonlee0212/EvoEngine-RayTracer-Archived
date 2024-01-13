@@ -293,7 +293,7 @@ namespace EvoEngine {
 		std::vector<InstanceMatrix>* m_instanceMatrices = nullptr;
 		union {
 			std::vector<glm::uvec3>* m_triangles = nullptr;
-			std::vector<glm::uint>* m_curveSegments;
+			std::vector<glm::uvec4>* m_curveSegments;
 		};
 
 		OptixTraversableHandle m_traversableHandle = 0;

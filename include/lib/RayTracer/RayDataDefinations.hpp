@@ -55,7 +55,7 @@ namespace EvoEngine {
                     hitInfo.m_color = interpolator.color(u);
                 }
                     break;
-                case OPTIX_PRIMITIVE_TYPE_ROUND_CUBIC_BSPLINE: {
+                case OPTIX_PRIMITIVE_TYPE_ROUND_CUBIC_BEZIER: {
                     CubicBSplineSegment interpolator(&m_strandPoints[m_segments[primitiveIndex]]);
                     const auto u = optixGetCurveParameter();
                     hitInfo.m_normal = surfaceNormal(interpolator, u, hitInfo.m_position);
@@ -111,7 +111,7 @@ namespace EvoEngine {
                     return NormalLinear(primitiveIndex);
                 case OPTIX_PRIMITIVE_TYPE_ROUND_QUADRATIC_BSPLINE:
                     return NormalQuadratic(primitiveIndex);
-                case OPTIX_PRIMITIVE_TYPE_ROUND_CUBIC_BSPLINE:
+                case OPTIX_PRIMITIVE_TYPE_ROUND_CUBIC_BEZIER:
                     return NormalCubic(primitiveIndex);
             }
             return glm::vec3(0.0f);
