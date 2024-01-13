@@ -67,7 +67,7 @@ void RayTracerLayer::UpdateMeshesStorage(std::unordered_map<uint64_t, RayTracedM
 				rayTracedGeometry.m_curveSegments = &strands->UnsafeGetSegments();
 				rayTracedGeometry.m_curvePoints = &strands->UnsafeGetStrandPoints();
 				rayTracedGeometry.m_version = strands->GetVersion();
-				rayTracedGeometry.m_geometryType = PrimitiveType::CubicBezier;
+				rayTracedGeometry.m_geometryType = PrimitiveType::CubicBSpline;
 				rayTracedGeometry.m_handle = geometryHandle;
 			}
 			if (CheckMaterial(rayTracedMaterial, material)) needInstanceUpdate = true;
