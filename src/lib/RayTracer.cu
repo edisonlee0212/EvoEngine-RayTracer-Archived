@@ -1068,6 +1068,7 @@ void RayTracedGeometry::BuildGAS(const OptixDeviceContext &context) {
             buildInput.curveArray.indexBuffer = deviceStrands;
             buildInput.curveArray.indexStrideInBytes = sizeof(int);
             buildInput.curveArray.flag = OPTIX_GEOMETRY_FLAG_NONE;
+            buildInput.curveArray.endcapFlags = OPTIX_CURVE_ENDCAP_ON;
             buildInput.curveArray.primitiveIndexOffset = 0;
         }
             break;
@@ -1509,6 +1510,7 @@ void RayTracer::CreateModule(RayTracerPipeline &targetPipeline, char ptxCode[],
 
     OptixBuiltinISOptions builtinISOptions = {};
     builtinISOptions.builtinISModuleType = OPTIX_PRIMITIVE_TYPE_ROUND_QUADRATIC_BSPLINE;
+    builtinISOptions.curveEndcapFlags = OPTIX_CURVE_ENDCAP_ON;
     OPTIX_CHECK(optixBuiltinISModuleGet(m_optixDeviceContext, &targetPipeline.m_moduleCompileOptions,
                                         &targetPipeline.m_pipelineCompileOptions, &builtinISOptions,
                                         &targetPipeline.m_quadraticCurveModule));
