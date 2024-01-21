@@ -522,6 +522,7 @@ void RayTracerLayer::SceneCameraWindow() {
 			const ImVec2 overlayPos = ImGui::GetWindowPos();
 
 			ImVec2 viewPortSize = ImGui::GetWindowSize();
+			m_sceneCameraResolution = glm::ivec2(viewPortSize.x, viewPortSize.y);
 			if (m_sceneCamera->m_allowAutoResize)
 				m_sceneCamera->m_frameSize = glm::vec2(viewPortSize.x, viewPortSize.y) * m_resolutionMultiplier;
 			if (m_sceneCamera->m_rendered) {
@@ -757,5 +758,10 @@ bool RayTracerLayer::CheckCompressedBTF(RayTracedMaterial& rayTracerMaterial,
 		rayTracerMaterial.m_btfBase = &compressedBtf->m_bTFBase;
 	}
 	return changed;
+}
+
+glm::ivec2 RayTracerLayer::GetSceneCameraResolution() const
+{
+	return m_sceneCameraResolution;
 }
 

@@ -58,16 +58,11 @@ void PointCloudScanner::OnInspect(const std::shared_ptr<EditorLayer>& editorLaye
 }
 
 void PointCloudScanner::Serialize(YAML::Emitter &out) {
-    out << YAML::Key << "m_rotateAngle" << YAML::Value << m_rotateAngle;
-    out << YAML::Key << "m_size" << YAML::Value << m_size;
-    out << YAML::Key << "m_distance" << YAML::Value << m_distance;
+    
 }
 
 void PointCloudScanner::Deserialize(const YAML::Node &in) {
-    m_rotateAngle = in["m_rotateAngle"].as<float>();
-    m_size = in["m_size"].as<glm::vec2>();
-    m_distance = in["m_distance"].as<glm::vec2>();
-
+    
 }
 
 void PointCloudScanner::Scan() {

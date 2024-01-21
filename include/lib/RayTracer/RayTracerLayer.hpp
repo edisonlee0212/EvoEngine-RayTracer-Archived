@@ -29,6 +29,8 @@ namespace EvoEngine {
         bool CheckMaterial(RayTracedMaterial &rayTracerMaterial, const std::shared_ptr<Material> &material) const;
 
         bool CheckCompressedBTF(RayTracedMaterial &rayTracerMaterial, const std::shared_ptr<CompressedBTF> &compressedBtf) const;
+
+        glm::ivec2 m_sceneCameraResolution = glm::ivec2(0);
     public:
         bool m_showSceneInfo = false;
         bool m_renderMeshRenderer = true;
@@ -36,7 +38,7 @@ namespace EvoEngine {
         bool m_renderParticles = true;
         bool m_renderBTFMeshRenderer = true;
         bool m_renderSkinnedMeshRenderer = false;
-
+        [[nodiscard]] glm::ivec2 GetSceneCameraResolution() const;
         bool m_showRayTracerSettingsWindow = false;
         EnvironmentProperties m_environmentProperties;
         std::shared_ptr<CudaImage> m_environmentalMapImage;
