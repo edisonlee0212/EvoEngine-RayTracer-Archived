@@ -5,7 +5,7 @@
 #include "EditorLayer.hpp"
 #include "RayTracerCamera.hpp"
 #include "TriangleIlluminationEstimator.hpp"
-#include "PointCloudScanner.hpp"
+#include "BasicPointCloudScanner.hpp"
 #include "ClassRegistry.hpp"
 #include "StrandsRenderer.hpp"
 #include "MeshRenderer.hpp"
@@ -398,8 +398,8 @@ void RayTracerLayer::OnCreate() {
 		"TriangleIlluminationEstimator");
 	ClassRegistry::RegisterPrivateComponent<RayTracerCamera>(
 		"RayTracerCamera");
-	ClassRegistry::RegisterPrivateComponent<PointCloudScanner>(
-		"PointCloudScanner");
+	ClassRegistry::RegisterPrivateComponent<BasicPointCloudScanner>(
+		"BasicPointCloudScanner");
 	ClassRegistry::RegisterAsset<CompressedBTF>(
 		"CompressedBTF", { ".cbtf" });
 

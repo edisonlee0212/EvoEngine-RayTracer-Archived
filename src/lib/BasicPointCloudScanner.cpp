@@ -2,7 +2,7 @@
 // Created by lllll on 12/15/2021.
 //
 
-#include "PointCloudScanner.hpp"
+#include "BasicPointCloudScanner.hpp"
 
 #include <ClassRegistry.hpp>
 #include "Jobs.hpp"
@@ -10,7 +10,7 @@
 #include "Graphics.hpp"
 using namespace EvoEngine;
 
-void PointCloudScanner::OnInspect(const std::shared_ptr<EditorLayer>& editorLayer) {
+void BasicPointCloudScanner::OnInspect(const std::shared_ptr<EditorLayer>& editorLayer) {
     ImGui::DragFloat("Angle", &m_rotateAngle, 0.1f, -90.0f, 90.0f);
     ImGui::DragFloat2("Size", &m_size.x, 0.1f);
     ImGui::DragFloat2("Distance", &m_distance.x, 0.001f, 1.0f, 0.001f);
@@ -57,15 +57,15 @@ void PointCloudScanner::OnInspect(const std::shared_ptr<EditorLayer>& editorLaye
     }
 }
 
-void PointCloudScanner::Serialize(YAML::Emitter &out) {
+void BasicPointCloudScanner::Serialize(YAML::Emitter &out) {
     
 }
 
-void PointCloudScanner::Deserialize(const YAML::Node &in) {
+void BasicPointCloudScanner::Deserialize(const YAML::Node &in) {
     
 }
 
-void PointCloudScanner::Scan() {
+void BasicPointCloudScanner::Scan() {
     const auto column = unsigned(m_size.x / m_distance.x);
     const int columnStart = -(int) (column / 2);
     const auto row = unsigned(m_size.y / m_distance.y);
@@ -101,7 +101,7 @@ void PointCloudScanner::Scan() {
     }
 }
 
-void PointCloudScanner::ConstructPointCloud(std::shared_ptr<PointCloud> pointCloud) {
+void BasicPointCloudScanner::ConstructPointCloud(std::shared_ptr<PointCloud> pointCloud) {
     for(int i = 0; i < m_points.size(); i++){
         pointCloud->m_points.push_back(m_points[i]);
     }

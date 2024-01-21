@@ -8,7 +8,7 @@
 #include "PointCloud.hpp"
 using namespace EvoEngine;
 namespace EvoEngine {
-    class PointCloudScanner : public IPrivateComponent {
+    class BasicPointCloudScanner : public IPrivateComponent {
     public:
         float m_rotateAngle = 0.0f;
         glm::vec2 m_size = glm::vec2(8, 4);
