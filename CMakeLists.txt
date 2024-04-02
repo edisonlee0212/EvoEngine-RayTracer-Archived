@@ -132,7 +132,7 @@ endif ()
 if (${CMAKE_BINARY_DIR} STREQUAL ${PROJECT_BINARY_DIR})
 	add_executable(Application
 		"src/app/Application.cpp"
-		src/lib/PointCloudScanner.cpp include/lib/Utilities/PointCloudScanner.hpp)
+		)
 	target_precompile_headers(Application
 		PRIVATE
 		${EVOENGINE_PCH}

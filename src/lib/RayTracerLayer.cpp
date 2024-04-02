@@ -222,7 +222,7 @@ void RayTracerLayer::UpdateMeshesStorage(std::unordered_map<uint64_t, RayTracedM
 			auto mesh = particles->m_mesh.Get<Mesh>();
 			auto material = particles->m_material.Get<Material>();
 			auto particleInfoList = particles->m_particleInfoList.Get<ParticleInfoList>();
-			if (!material || !mesh || !particleInfoList || mesh->UnsafeGetVertices().empty() || particleInfoList->m_particleInfos.empty())
+			if (!material || !mesh || !particleInfoList || mesh->UnsafeGetVertices().empty() || particleInfoList->PeekParticleInfoList().empty())
 				continue;
 			auto globalTransform = scene->GetDataComponent<GlobalTransform>(entity).m_value;
 			bool needInstanceUpdate = false;
@@ -254,7 +254,8 @@ void RayTracerLayer::UpdateMeshesStorage(std::unordered_map<uint64_t, RayTracedM
 				rayTracedGeometry.m_rendererType = RendererType::Instanced;
 				rayTracedGeometry.m_triangles = &mesh->UnsafeGetTriangles();
 				rayTracedGeometry.m_vertices = &mesh->UnsafeGetVertices();
-				rayTracedGeometry.m_instanceMatrices = reinterpret_cast<std::vector<InstanceMatrix>*>(&particleInfoList->m_particleInfos);
+				auto *pointer = &(particleInfoList->PeekParticleInfoList());
+				rayTracedGeometry.m_instanceMatrices = (std::vector<InstanceMatrix>*)(pointer);
 				rayTracedGeometry.m_version = mesh->GetVersion();
 				rayTracedGeometry.m_handle = geometryHandle;
 				rayTracedInstance.m_dataVersion = particleInfoList->GetVersion();
