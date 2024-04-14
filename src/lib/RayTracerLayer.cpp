@@ -541,11 +541,11 @@ void RayTracerLayer::SceneCameraWindow() {
 				const auto windowPosPivot = ImVec2((corner & 1) ? 1.0f : 0.0f, (corner & 2) ? 1.0f : 0.0f);
 				ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always, windowPosPivot);
 				ImGui::SetNextWindowBgAlpha(0.35f);
-				constexpr auto windowFlags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoDocking |
-					ImGuiWindowFlags_AlwaysAutoResize |
+				constexpr ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoDocking |
 					ImGuiWindowFlags_NoSavedSettings |
 					ImGuiWindowFlags_NoFocusOnAppearing;
-				if (ImGui::BeginChild("Info", ImVec2(300, 300), true, windowFlags)) {
+				constexpr ImGuiChildFlags childFlags = ImGuiChildFlags_None;
+				if (ImGui::BeginChild("Info", ImVec2(300, 300), childFlags, windowFlags)) {
 					ImGui::Text("Info & Settings");
 					ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
 					std::string drawCallInfo = {};
