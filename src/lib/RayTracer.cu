@@ -254,7 +254,7 @@ bool RayTracer::RenderToCamera(const EnvironmentProperties &environmentPropertie
         return false;
     BuildSBT();
     bool statusChanged = false;
-    if (m_requireUpdate) statusChanged = true;
+    if (m_sceneModified) statusChanged = true;
     m_cameraRenderingLaunchParams.m_cameraProperties = cameraProperties;
     statusChanged = statusChanged || cameraProperties.m_modified;
     cameraProperties.m_modified = false;
@@ -1450,6 +1450,7 @@ void RayTracer::BuildIAS() {
     m_illuminationEstimationLaunchParams.m_traversable = iASHandle;
     m_pointCloudScanningLaunchParams.m_traversable = iASHandle;
     m_hasAccelerationStructure = true;
+    m_sceneModified = true;
 }
 
 void RayTracer::AssemblePipelines() {

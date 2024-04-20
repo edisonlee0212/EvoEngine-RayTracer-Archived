@@ -15,7 +15,6 @@ using namespace EvoEngine;
 void RayTracerCamera::Ready(const glm::vec3 &position, const glm::quat &rotation) {
     if (m_cameraProperties.m_frame.m_size != m_frameSize) {
         m_frameSize = glm::max(glm::uvec2(1, 1), m_frameSize);
-        m_frameSize.y = glm::max(m_frameSize.y, 131072 / m_frameSize.x);
         m_cameraProperties.Resize(m_frameSize);
         VkExtent3D extent;
         extent.width = m_frameSize.x;
@@ -66,7 +65,6 @@ void RayTracerCamera::OnCreate() {
     renderTextureCreateInfo.m_extent.height = m_frameSize.y;
     renderTextureCreateInfo.m_extent.depth = 1;
     m_renderTexture = std::make_unique<RenderTexture>(renderTextureCreateInfo);
-    m_cameraProperties.m_frame.m_size = m_frameSize;
     Ready(glm::vec3(0), glm::vec3(0));
 }
 

@@ -62,13 +62,13 @@ namespace EvoEngine {
 		OutputType m_outputType = OutputType::Color;
 		float m_gamma = 2.2f;
 		struct {
-			glm::vec4* m_colorBuffer;
-			glm::vec4* m_normalBuffer;
-			glm::vec4* m_albedoBuffer;
+			glm::vec4* m_colorBuffer = nullptr;
+			glm::vec4* m_normalBuffer = nullptr;
+			glm::vec4* m_albedoBuffer = nullptr;
 			/*! the size of the frame buffer to render */
-			glm::uvec2 m_size;
-			size_t m_frameId;
-		} m_frame;
+			glm::uvec2 m_size = {};
+			size_t m_frameId = 0;
+		} m_frame {};
 
 		bool m_modified = false;
 
@@ -362,7 +362,7 @@ namespace EvoEngine {
 
 	class RayTracer {
 	public:
-		bool m_requireUpdate = false;
+		bool m_sceneModified = false;
 		std::unordered_map<uint64_t, RayTracedMaterial> m_materials;
 		std::unordered_map<uint64_t, RayTracedGeometry> m_geometries;
 		std::unordered_map<uint64_t, RayTracedInstance> m_instances;

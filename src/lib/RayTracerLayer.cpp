@@ -17,14 +17,16 @@ using namespace EvoEngine;
 
 std::shared_ptr<RayTracerCamera> RayTracerLayer::m_rayTracerCamera;
 
-void RayTracerLayer::UpdateMeshesStorage(std::unordered_map<uint64_t, RayTracedMaterial>& materialStorage,
+void RayTracerLayer::UpdateMeshesStorage(
+	const std::shared_ptr<Scene>& scene,
+	std::unordered_map<uint64_t, RayTracedMaterial>& materialStorage,
 	std::unordered_map<uint64_t, RayTracedGeometry>& geometryStorage,
 	std::unordered_map<uint64_t, RayTracedInstance>& instanceStorage,
 	bool& rebuildInstances, bool& updateShaderBindingTable) const {
 	for (auto& i : instanceStorage) i.second.m_removeFlag = true;
 	for (auto& i : geometryStorage) i.second.m_removeFlag = true;
 	for (auto& i : materialStorage) i.second.m_removeFlag = true;
-	auto scene = GetScene();
+
 
 	if (const auto* rayTracedEntities =
 		scene->UnsafeGetPrivateComponentOwnersList<StrandsRenderer>();
@@ -254,7 +256,7 @@ void RayTracerLayer::UpdateMeshesStorage(std::unordered_map<uint64_t, RayTracedM
 				rayTracedGeometry.m_rendererType = RendererType::Instanced;
 				rayTracedGeometry.m_triangles = &mesh->UnsafeGetTriangles();
 				rayTracedGeometry.m_vertices = &mesh->UnsafeGetVertices();
-				auto *pointer = &(particleInfoList->PeekParticleInfoList());
+				auto* pointer = &(particleInfoList->PeekParticleInfoList());
 				rayTracedGeometry.m_instanceMatrices = (std::vector<InstanceMatrix>*)(pointer);
 				rayTracedGeometry.m_version = mesh->GetVersion();
 				rayTracedGeometry.m_handle = geometryHandle;
@@ -334,31 +336,31 @@ void RayTracerLayer::UpdateMeshesStorage(std::unordered_map<uint64_t, RayTracedM
 	for (auto& i : instanceStorage) if (i.second.m_removeFlag) rebuildInstances = true;
 }
 
-void RayTracerLayer::UpdateScene() {
+bool RayTracerLayer::UpdateScene(const std::shared_ptr<Scene>& scene) {
 	bool rebuildAccelerationStructure = false;
 	bool updateShaderBindingTable = false;
 	auto& instanceStorage = CudaModule::GetRayTracer()->m_instances;
 	auto& materialStorage = CudaModule::GetRayTracer()->m_materials;
 	auto& geometryStorage = CudaModule::GetRayTracer()->m_geometries;
-	UpdateMeshesStorage(materialStorage, geometryStorage, instanceStorage, rebuildAccelerationStructure,
+	UpdateMeshesStorage(scene, materialStorage, geometryStorage, instanceStorage, rebuildAccelerationStructure,
 		updateShaderBindingTable);
-	auto& envSettings = GetScene()->m_environment;
-	bool useEnvMap = envSettings.m_environmentType == EnvironmentType::EnvironmentalMap;
-	if(m_environmentProperties.m_useEnvironmentalMap != useEnvMap)
+	auto& envSettings = scene->m_environment;
+	const bool useEnvMap = envSettings.m_environmentType == EnvironmentType::EnvironmentalMap;
+	if (m_environmentProperties.m_useEnvironmentalMap != useEnvMap)
 	{
 		m_environmentProperties.m_useEnvironmentalMap = useEnvMap;
 		updateShaderBindingTable = true;
 	}
-	if(m_environmentalMapHandle != envSettings.m_environmentalMap.GetAssetHandle())
+	if (m_environmentalMapHandle != envSettings.m_environmentalMap.GetAssetHandle())
 	{
 		m_environmentalMapHandle = envSettings.m_environmentalMap.GetAssetHandle();
 		if (auto envMap = envSettings.m_environmentalMap.Get<EnvironmentalMap>()) {
-			const auto reflectionProbe = envMap->m_reflectionProbe.Get<ReflectionProbe>();
-			if (reflectionProbe) {
+			if (const auto reflectionProbe = envMap->m_reflectionProbe.Get<ReflectionProbe>()) {
 				m_environmentalMapImage = CudaModule::ImportCubemap(reflectionProbe->GetCubemap());
 				m_environmentProperties.m_environmentalMap = m_environmentalMapImage->m_textureObject;
 			}
-		}else
+		}
+		else
 		{
 			envMap = Resources::GetResource<EnvironmentalMap>("DEFAULT_ENVIRONMENTAL_MAP");
 			const auto reflectionProbe = envMap->m_reflectionProbe.Get<ReflectionProbe>();
@@ -380,15 +382,16 @@ void RayTracerLayer::UpdateScene() {
 		updateShaderBindingTable = true;
 	}
 
-	CudaModule::GetRayTracer()->m_requireUpdate = false;
-	if (rebuildAccelerationStructure &&
-		(!instanceStorage.empty())) {
+	CudaModule::GetRayTracer()->m_sceneModified = false;
+	if (rebuildAccelerationStructure && !instanceStorage.empty()) {
 		CudaModule::GetRayTracer()->BuildIAS();
-		CudaModule::GetRayTracer()->m_requireUpdate = true;
+		return true;
 	}
-	else if (updateShaderBindingTable) {
-		CudaModule::GetRayTracer()->m_requireUpdate = true;
+	if (updateShaderBindingTable) {
+		CudaModule::GetRayTracer()->m_sceneModified = true;
+		return true;
 	}
+	return false;
 }
 
 void RayTracerLayer::OnCreate() {
@@ -413,36 +416,27 @@ void RayTracerLayer::OnCreate() {
 
 
 void RayTracerLayer::PreUpdate() {
-	UpdateScene();
+	const auto scene = GetScene();
+	bool rayTracerUpdated = UpdateScene(scene);
 	if (!CudaModule::GetRayTracer()->m_instances.empty()) {
-		auto editorLayer = Application::GetLayer<EditorLayer>();
+		const auto editorLayer = Application::GetLayer<EditorLayer>();
 		if (m_showSceneWindow && editorLayer && m_renderingEnabled) {
 			m_sceneCamera->Ready(editorLayer->GetSceneCameraPosition(), editorLayer->GetSceneCameraRotation());
-			Graphics::ImmediateSubmit([&](VkCommandBuffer commandBuffer)
-				{
-					m_sceneCamera->m_rendered = CudaModule::GetRayTracer()->RenderToCamera(m_environmentProperties,
-					m_sceneCamera->m_cameraProperties,
-					m_sceneCamera->m_rayProperties);
-				});
+			m_sceneCamera->m_rendered = CudaModule::GetRayTracer()->RenderToCamera(m_environmentProperties,
+				m_sceneCamera->m_cameraProperties, m_sceneCamera->m_rayProperties);
 		}
-		auto scene = GetScene();
-		auto* entities = scene->UnsafeGetPrivateComponentOwnersList<RayTracerCamera>();
+		const auto* entities = scene->UnsafeGetPrivateComponentOwnersList<RayTracerCamera>();
 		m_rayTracerCamera.reset();
 		if (entities) {
 			bool check = false;
 			for (const auto& entity : *entities) {
 				if (!scene->IsEntityEnabled(entity)) continue;
-				auto rayTracerCamera = scene->GetOrSetPrivateComponent<RayTracerCamera>(entity).lock();
+				const auto rayTracerCamera = scene->GetOrSetPrivateComponent<RayTracerCamera>(entity).lock();
 				if (!rayTracerCamera->IsEnabled()) continue;
 				auto globalTransform = scene->GetDataComponent<GlobalTransform>(rayTracerCamera->GetOwner()).m_value;
 				rayTracerCamera->Ready(globalTransform[3], glm::quat_cast(globalTransform));
-				Graphics::ImmediateSubmit([&](VkCommandBuffer commandBuffer)
-					{
-						rayTracerCamera->m_rendered = CudaModule::GetRayTracer()->RenderToCamera(m_environmentProperties,
-						rayTracerCamera->m_cameraProperties,
-						rayTracerCamera->m_rayProperties);
-					});
-
+				rayTracerCamera->m_rendered = CudaModule::GetRayTracer()->RenderToCamera(m_environmentProperties,
+					rayTracerCamera->m_cameraProperties, rayTracerCamera->m_rayProperties);
 
 				if (!check) {
 					if (rayTracerCamera->m_mainCamera) {
@@ -650,7 +644,7 @@ void RayTracerLayer::RayCameraWindow() {
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 	if (ImGui::Begin("Camera (RT)")) {
 		if (ImGui::BeginChild("RayCameraRenderer", ImVec2(0, 0), false,
-			ImGuiWindowFlags_None | ImGuiWindowFlags_MenuBar)) {
+			ImGuiWindowFlags_None)) {
 			ImVec2 viewPortSize = ImGui::GetWindowSize();
 			if (m_rayTracerCamera) {
 				if (m_rayTracerCamera->m_allowAutoResize)
@@ -706,7 +700,7 @@ RayTracerLayer::CheckMaterial(RayTracedMaterial& rayTracerMaterial, const std::s
 		rayTracerMaterial.m_handle = material->GetHandle();
 		rayTracerMaterial.m_version = material->GetVersion();
 		rayTracerMaterial.m_materialProperties = material->m_materialProperties;
-		
+
 		const auto albedoTexture = material->GetAlbedoTexture();
 		if (albedoTexture &&
 			albedoTexture->GetVkImage() != VK_NULL_HANDLE) {
@@ -739,7 +733,7 @@ RayTracerLayer::CheckMaterial(RayTracedMaterial& rayTracerMaterial, const std::s
 		else {
 			rayTracerMaterial.m_metallicTexture = nullptr;
 		}
-		
+
 		changed = true;
 	}
 
