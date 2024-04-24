@@ -81,7 +81,7 @@ void BasicPointCloudScanner::Scan() {
 	pcSamples.resize(size);
 
 	std::vector<std::shared_future<void>> results;
-	Jobs::ParallelFor(size, [&](unsigned i) {
+	Jobs::RunParallelFor(size, [&](unsigned i) {
 		const int columnIndex = (int) i / row;
 		const int rowIndex = (int) i % row;
 		const auto position = center + left * (float) (columnStart + columnIndex) * m_distance.x + up * (float) (rowStart + rowIndex) * m_distance.y;
