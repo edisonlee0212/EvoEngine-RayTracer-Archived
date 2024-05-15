@@ -11,12 +11,16 @@ using namespace EvoEngine;
 #include "Mesh.hpp"
 using namespace EvoEngine;
 
-void BTFMeshRenderer::OnInspect(const std::shared_ptr<EditorLayer>& editorLayer) {
-    editorLayer->DragAndDropButton<Mesh>(m_mesh, "Mesh");
-    editorLayer->DragAndDropButton<CompressedBTF>(m_btf, "CompressedBTF");
+bool BTFMeshRenderer::OnInspect(const std::shared_ptr<EditorLayer>& editorLayer) {
+    bool changed = false;
+
+	if(editorLayer->DragAndDropButton<Mesh>(m_mesh, "Mesh")) changed = true;
+    if(editorLayer->DragAndDropButton<CompressedBTF>(m_btf, "CompressedBTF")) changed = true;
+
+    return changed;
 }
 
-void BTFMeshRenderer::Serialize(YAML::Emitter &out) {
+void BTFMeshRenderer::Serialize(YAML::Emitter &out) const {
     m_mesh.Save("m_mesh", out);
     m_btf.Save("m_btf", out);
 }

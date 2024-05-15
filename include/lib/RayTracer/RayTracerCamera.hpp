@@ -27,7 +27,7 @@ namespace EvoEngine {
         RayProperties m_rayProperties;
         glm::uvec2 m_frameSize;
         void Ready(const glm::vec3& position, const glm::quat& rotation);
-        void OnInspect(const std::shared_ptr<EditorLayer>& editorLayer) override;
+        bool OnInspect(const std::shared_ptr<EditorLayer>& editorLayer) override;
         void SetFov(float value);
         void SetAperture(float value);
         void SetFocalLength(float value);
@@ -39,7 +39,7 @@ namespace EvoEngine {
         void SetDenoiserStrength(float value);
         void OnCreate() override;
         void OnDestroy() override;
-        void Serialize(YAML::Emitter &out) override;
+        void Serialize(YAML::Emitter &out) const override;
         void Deserialize(const YAML::Node &in) override;
         RayTracerCamera& operator=(const RayTracerCamera& source);
         void Render();

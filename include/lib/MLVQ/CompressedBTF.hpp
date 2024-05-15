@@ -33,9 +33,9 @@ namespace EvoEngine {
     public:
         size_t m_version = 0;
         BTFBase m_bTFBase;
-        void OnInspect(const std::shared_ptr<EditorLayer>& editorLayer) override;
+        bool OnInspect(const std::shared_ptr<EditorLayer>& editorLayer) override;
         bool ImportFromFolder(const std::filesystem::path &path);
-        void Serialize(YAML::Emitter &out) override;
+        void Serialize(YAML::Emitter &out) const override;
 
         void Deserialize(const YAML::Node &in) override;
     };

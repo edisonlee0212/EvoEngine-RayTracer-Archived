@@ -392,7 +392,7 @@ bool CompressedBTF::ImportFromFolder(const std::filesystem::path &path) {
 #pragma endregion
 }
 
-void CompressedBTF::OnInspect(const std::shared_ptr<EditorLayer>& editorLayer) {
+bool CompressedBTF::OnInspect(const std::shared_ptr<EditorLayer>& editorLayer) {
     bool changed = false;
     FileUtils::OpenFolder("Import Database", [&](const std::filesystem::path &path) {
         try {
@@ -424,10 +424,7 @@ void CompressedBTF::OnInspect(const std::shared_ptr<EditorLayer>& editorLayer) {
             changed = true;
         }
     }
-    if (changed) {
-        m_saved = false;
-        m_version++;
-    }
+    return changed;
 }
 
 
@@ -739,7 +736,7 @@ void SaveList(const std::string &name, YAML::Emitter &out, const std::vector<T> 
     }
 }
 
-void CompressedBTF::Serialize(YAML::Emitter &out) {
+void CompressedBTF::Serialize(YAML::Emitter &out) const {
     if (m_bTFBase.m_hasData) {
         out << YAML::Key << "m_bTFBase" << YAML::Value << YAML::BeginMap;
         SerializeBTFBase(m_bTFBase, out);
@@ -767,7 +764,6 @@ void CompressedBTF::Serialize(YAML::Emitter &out) {
         SaveList("m_vectorColorBasis", out, m_vectorColorBasis);
 
     }
-    m_saved = true;
 }
 
 void CompressedBTF::Deserialize(const YAML::Node &in) {

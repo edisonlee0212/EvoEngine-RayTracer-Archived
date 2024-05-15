@@ -10,6 +10,7 @@ void LightProbeGroup::CalculateIllumination(const RayProperties& rayProperties, 
     CudaModule::EstimateIlluminationRayTracing(Application::GetLayer<RayTracerLayer>()->m_environmentProperties, rayProperties, m_lightProbes, seed, pushNormalDistance);
 }
 
-void LightProbeGroup::OnInspect() {
+bool LightProbeGroup::OnInspect() {
     ImGui::Text("Light probes size: %llu", m_lightProbes.size());
+    return false;
 }

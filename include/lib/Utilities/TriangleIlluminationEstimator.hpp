@@ -16,9 +16,9 @@ namespace EvoEngine {
         float m_totalArea = 0.0f;
         glm::vec3 m_totalFlux = glm::vec3(0.0f);
         glm::vec3 m_averageFlux = glm::vec3(0.0f);
-        void OnInspect(const std::shared_ptr<EditorLayer>& editorLayer) override;
+        bool OnInspect(const std::shared_ptr<EditorLayer>& editorLayer) override;
 
-        void Serialize(YAML::Emitter &out) override;
+        void Serialize(YAML::Emitter &out) const override;
         void Deserialize(const YAML::Node &in) override;
     };
 

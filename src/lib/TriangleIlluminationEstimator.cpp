@@ -49,21 +49,23 @@ void ColorDescendentsVertices(const std::shared_ptr<Scene>& scene, const Entity&
 	}
 }
 
-void TriangleIlluminationEstimator::OnInspect(const std::shared_ptr<EditorLayer>& editorLayer) {
+bool TriangleIlluminationEstimator::OnInspect(const std::shared_ptr<EditorLayer>& editorLayer) {
+	bool changed = false;
 	auto scene = GetScene();
 	auto owner = GetOwner();
 	m_lightProbeGroup.OnInspect();
 	static int seed = 0;
 	static float pushNormalDistance = 0.001f;
 	static RayProperties rayProperties;
-	ImGui::DragInt("Seed", &seed);
-	ImGui::DragFloat("Normal Distance", &pushNormalDistance, 0.0001f, -1.0f, 1.0f);
-	ImGui::DragInt("Samples", &rayProperties.m_samples);
-	ImGui::DragInt("Bounces", &rayProperties.m_bounces);
+	if(ImGui::DragInt("Seed", &seed)) changed = true;
+	if (ImGui::DragFloat("Normal Distance", &pushNormalDistance, 0.0001f, -1.0f, 1.0f)) changed = true;
+	if (ImGui::DragInt("Samples", &rayProperties.m_samples)) changed = true;
+	if (ImGui::DragInt("Bounces", &rayProperties.m_bounces)) changed = true;
 	if (ImGui::Button("Estimate")) {
 		PrepareLightProbeGroup();
 		SampleLightProbeGroup(rayProperties, seed, pushNormalDistance);
 		ColorDescendentsVertices(scene, owner, m_lightProbeGroup);
+		changed = true;
 	}
 	if (ImGui::TreeNode("Details")) {
 		if (ImGui::Button("Prepare light probe group")) {
@@ -81,6 +83,8 @@ void TriangleIlluminationEstimator::OnInspect(const std::shared_ptr<EditorLayer>
 	ImGui::Text("%s", ("Surface area: " + std::to_string(m_totalArea)).c_str());
 	ImGui::Text("%s", ("Total energy: " + std::to_string(glm::length(m_totalFlux))).c_str());
 	ImGui::Text("%s", ("Radiant flux: " + std::to_string(glm::length(m_averageFlux))).c_str());
+
+	return changed;
 }
 
 void TriangleIlluminationEstimator::SampleLightProbeGroup(const RayProperties& rayProperties, int seed,
@@ -151,7 +155,7 @@ void TriangleIlluminationEstimator::PrepareLightProbeGroup() {
 	}
 }
 
-void TriangleIlluminationEstimator::Serialize(YAML::Emitter& out) {
+void TriangleIlluminationEstimator::Serialize(YAML::Emitter& out) const {
 	out << YAML::Key << "m_totalArea" << YAML::Value << m_totalArea;
 	out << YAML::Key << "m_totalFlux" << YAML::Value << m_totalFlux;
 	out << YAML::Key << "m_averageFlux" << YAML::Value << m_averageFlux;

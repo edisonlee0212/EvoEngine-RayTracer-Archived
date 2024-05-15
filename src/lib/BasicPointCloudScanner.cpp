@@ -10,13 +10,16 @@
 #include "Graphics.hpp"
 using namespace EvoEngine;
 
-void BasicPointCloudScanner::OnInspect(const std::shared_ptr<EditorLayer>& editorLayer) {
-	ImGui::DragFloat("Angle", &m_rotateAngle, 0.1f, -90.0f, 90.0f);
-	ImGui::DragFloat2("Size", &m_size.x, 0.1f);
-	ImGui::DragFloat2("Distance", &m_distance.x, 0.001f, 1.0f, 0.001f);
+bool BasicPointCloudScanner::OnInspect(const std::shared_ptr<EditorLayer>& editorLayer) {
+	bool changed = false;
+
+
+	if(ImGui::DragFloat("Angle", &m_rotateAngle, 0.1f, -90.0f, 90.0f)) changed = true;
+	if (ImGui::DragFloat2("Size", &m_size.x, 0.1f)) changed = true;
+	if (ImGui::DragFloat2("Distance", &m_distance.x, 0.001f, 1.0f, 0.001f)) changed = true;
 	auto scene = GetScene();
 	static glm::vec4 color = glm::vec4(0, 1, 0, 0.5);
-	ImGui::ColorEdit4("Color", &color.x);
+	if (ImGui::ColorEdit4("Color", &color.x)) changed = true;
 	static bool renderPlane = true;
 	ImGui::Checkbox("Render plane", &renderPlane);
 	auto gt = scene->GetDataComponent<GlobalTransform>(GetOwner());
@@ -35,6 +38,7 @@ void BasicPointCloudScanner::OnInspect(const std::shared_ptr<EditorLayer>& edito
 	}
 	if (ImGui::Button("Scan")) {
 		Scan();
+		changed = true;
 	}
 
 	ImGui::Text("Sample amount: %d", m_points.size());
@@ -55,9 +59,10 @@ void BasicPointCloudScanner::OnInspect(const std::shared_ptr<EditorLayer>& edito
 			pointCloud.Clear();
 		}
 	}
+	return changed;
 }
 
-void BasicPointCloudScanner::Serialize(YAML::Emitter &out) {
+void BasicPointCloudScanner::Serialize(YAML::Emitter &out) const {
 	
 }
 

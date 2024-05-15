@@ -28,7 +28,7 @@ void RayTracerCamera::Ready(const glm::vec3 &position, const glm::quat &rotation
 
 }
 
-void RayTracerCamera::OnInspect(const std::shared_ptr<EditorLayer>& editorLayer) {
+bool RayTracerCamera::OnInspect(const std::shared_ptr<EditorLayer>& editorLayer) {
     if (GetScene()->IsEntityValid(GetOwner())) ImGui::Checkbox("Main Camera", &m_mainCamera);
 
     m_cameraProperties.OnInspect();
@@ -97,7 +97,7 @@ void RayTracerCamera::Deserialize(const YAML::Node &in) {
     if (in["m_cameraProperties.m_aperture"]) m_cameraProperties.m_aperture = in["m_cameraProperties.m_aperture"].as<float>();
 }
 
-void RayTracerCamera::Serialize(YAML::Emitter &out) {
+void RayTracerCamera::Serialize(YAML::Emitter &out) const {
     out << YAML::Key << "m_mainCamera" << YAML::Value << m_mainCamera;
 
     out << YAML::Key << "m_allowAutoResize" << YAML::Value << m_allowAutoResize;
