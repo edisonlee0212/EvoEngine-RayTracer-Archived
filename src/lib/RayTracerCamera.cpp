@@ -56,6 +56,7 @@ bool RayTracerCamera::OnInspect(const std::shared_ptr<EditorLayer>& editorLayer)
             m_frameSize = { resolution.x, resolution.y };
         }
     }
+    return false;
 }
 
 void RayTracerCamera::OnCreate() {
