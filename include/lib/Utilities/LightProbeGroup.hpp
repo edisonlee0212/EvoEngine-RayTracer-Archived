@@ -1,14 +1,13 @@
 #pragma once
-
 #include <evoengine-pch.hpp>
+
 #include <Application.hpp>
 #include <CUDAModule.hpp>
 
-using namespace EvoEngine;
-namespace EvoEngine {
-    struct LightProbeGroup {
-        std::vector<IlluminationSampler<glm::vec3>> m_lightProbes;
-        void CalculateIllumination(const RayProperties& rayProperties, int seed, float pushNormalDistance);
-        bool OnInspect();
-    };
-}
+namespace evo_engine {
+struct LightProbeGroup {
+  std::vector<IlluminationSampler<glm::vec3>> light_probes;
+  void CalculateIllumination(const RayProperties& ray_properties, int seed, float push_normal_distance);
+  bool OnInspect();
+};
+}  // namespace evo_engine

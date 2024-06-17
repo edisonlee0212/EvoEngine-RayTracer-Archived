@@ -4,6 +4,8 @@
 
 #include "CompressedBTF.hpp"
 
+using namespace evo_engine;
+
 #include "Console.hpp"
 #include "Utilities.hpp"
 
@@ -72,7 +74,7 @@ std::string LoadFileAsString(const std::string &path) {
     }
 }
 
-using namespace EvoEngine;
+using namespace evo_engine;
 
 bool CompressedBTF::ImportFromFolder(const std::filesystem::path &path) {
     auto materialDirectoryPath = path.string();
@@ -796,7 +798,7 @@ void CompressedBTF::Deserialize(const YAML::Node &in) {
         UploadDeviceData();
 
     }
-    m_saved = true;
+    saved_ = true;
 }
 
 void CompressedBTF::UploadDeviceData() {

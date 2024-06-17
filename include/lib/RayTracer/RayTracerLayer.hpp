@@ -1,70 +1,70 @@
 #pragma once
-
 #include "evoengine-pch.hpp"
+
+
 #include "CUDAModule.hpp"
+#include "CompressedBTF.hpp"
 #include "Cubemap.hpp"
 #include "ILayer.hpp"
-#include "CompressedBTF.hpp"
+
 #include "memory"
 
 #include "Material.hpp"
-using namespace EvoEngine;
-namespace EvoEngine {
-	class RayTracerCamera;
-	class RayTracerLayer : public ILayer {
-	protected:
-		void UpdateMeshesStorage(
-			const std::shared_ptr<Scene>& scene,
-			std::unordered_map<uint64_t, RayTracedMaterial>& materialStorage,
-			std::unordered_map<uint64_t, RayTracedGeometry>& geometryStorage,
-			std::unordered_map<uint64_t, RayTracedInstance>& instanceStorage, bool& rebuildInstances,
-			bool& updateShaderBindingTable) const;
+namespace evo_engine {
+class RayTracerCamera;
+class RayTracerLayer : public ILayer {
+ protected:
+  void UpdateMeshesStorage(const std::shared_ptr<Scene>& scene,
+                           std::unordered_map<uint64_t, RayTracedMaterial>& material_storage,
+                           std::unordered_map<uint64_t, RayTracedGeometry>& geometry_storage,
+                           std::unordered_map<uint64_t, RayTracedInstance>& instance_storage, bool& rebuild_instances,
+                           bool& update_shader_binding_table) const;
 
-		void SceneCameraWindow();
+  void SceneCameraWindow();
 
-		void RayCameraWindow();
+  static void RayCameraWindow();
 
-		friend class RayTracerCamera;
+  friend class RayTracerCamera;
 
-		static std::shared_ptr<RayTracerCamera> m_rayTracerCamera;
+  static std::shared_ptr<RayTracerCamera> ray_tracer_camera_;
 
-		bool CheckMaterial(RayTracedMaterial& rayTracerMaterial, const std::shared_ptr<Material>& material) const;
+  bool CheckMaterial(RayTracedMaterial& ray_tracer_material, const std::shared_ptr<Material>& material) const;
 
-		bool CheckCompressedBTF(RayTracedMaterial& rayTracerMaterial, const std::shared_ptr<CompressedBTF>& compressedBtf) const;
+  static bool CheckCompressedBtf(RayTracedMaterial& ray_tracer_material,
+                                 const std::shared_ptr<CompressedBTF>& compressed_btf);
 
-		glm::ivec2 m_sceneCameraResolution = glm::ivec2(0);
-	public:
-		
+  glm::ivec2 scene_camera_resolution_ = glm::ivec2(0);
 
-		bool m_showSceneInfo = false;
-		bool m_renderMeshRenderer = true;
-		bool m_renderStrandsRenderer = true;
-		bool m_renderParticles = true;
-		bool m_renderBTFMeshRenderer = true;
-		bool m_renderSkinnedMeshRenderer = false;
-		[[nodiscard]] glm::ivec2 GetSceneCameraResolution() const;
-		bool m_showRayTracerSettingsWindow = false;
-		EnvironmentProperties m_environmentProperties;
-		std::shared_ptr<CudaImage> m_environmentalMapImage;
-		Handle m_environmentalMapHandle = 0;
+ public:
+  bool show_scene_info = false;
+  bool render_mesh_renderer = true;
+  bool render_strands_renderer = true;
+  bool render_particles = true;
+  bool render_btf_mesh_renderer = true;
+  bool render_skinned_mesh_renderer = false;
+  [[nodiscard]] glm::ivec2 GetSceneCameraResolution() const;
+  bool show_ray_tracer_settings_window = false;
+  EnvironmentProperties environment_properties;
+  std::shared_ptr<CudaImage> environmental_map_image;
+  Handle environmental_map_handle = 0;
 
-		bool m_showSceneWindow = false;
-		bool m_showCameraWindow = false;
+  bool show_scene_window = false;
+  bool show_camera_window = false;
 
-		bool m_renderingEnabled = true;
-		float m_resolutionMultiplier = 1.0f;
-		std::shared_ptr<RayTracerCamera> m_sceneCamera;
+  bool rendering_enabled = true;
+  float resolution_multiplier = 1.0f;
+  std::shared_ptr<RayTracerCamera> scene_camera;
 
-		bool UpdateScene(const std::shared_ptr<Scene>& scene);
+  bool UpdateScene(const std::shared_ptr<Scene>& scene);
 
-		void Update() override;
+  void Update() override;
 
-		void OnCreate() override;
+  void OnCreate() override;
 
-		void PreUpdate() override;
+  void PreUpdate() override;
 
-		void OnInspect(const std::shared_ptr<EditorLayer>& editorLayer) override;
+  void OnInspect(const std::shared_ptr<EditorLayer>& editor_layer) override;
 
-		void OnDestroy() override;
-	};
-} // namespace EvoEngine
+  void OnDestroy() override;
+};
+}  // namespace evo_engine

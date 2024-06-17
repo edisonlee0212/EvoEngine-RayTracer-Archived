@@ -8,7 +8,7 @@
 
 #include <glm/glm.hpp>
 
-namespace EvoEngine {
+namespace evo_engine {
     struct BTFBase {
         bool m_hasData = false;
 

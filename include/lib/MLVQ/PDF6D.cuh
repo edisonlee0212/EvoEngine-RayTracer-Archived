@@ -3,7 +3,7 @@
 #include "PDF4D.cuh"
 #include "SharedCoordinates.cuh"
 
-namespace EvoEngine {
+namespace evo_engine {
 template <typename T> struct PDF6D {
   int m_numOfRows;   //! no. of rows in spatial BTF index
   int m_numOfCols;   //! no. of columns in spatial BTF index

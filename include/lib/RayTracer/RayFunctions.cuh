@@ -3,22 +3,22 @@
 #include "BSDF.cuh"
 #include "BSSDF.cuh"
 #include "Environment.cuh"
-namespace EvoEngine {
+namespace evo_engine {
     static __forceinline__ __device__ void AnyHitFunc() {
         const float3 rayDirectionInternal = optixGetWorldRayDirection();
         glm::vec3 rayDirection = glm::vec3(
                 rayDirectionInternal.x, rayDirectionInternal.y, rayDirectionInternal.z);
 #pragma region Retrive information
         const auto &sbtData = *(const SBT *) optixGetSbtDataPointer();
-        auto hitInfo = sbtData.GetHitInfo(rayDirection);
+        auto hit_info = sbtData.GetHitInfo(rayDirection);
 #pragma endregion
         switch (sbtData.m_materialType) {
             case MaterialType::Default: {
                 PerRayData <glm::vec3> &perRayData =
                         *GetRayDataPointer < PerRayData < glm::vec3 >> ();
                 glm::vec4 albedoColor =
-                        static_cast<SurfaceMaterial *>(sbtData.m_material)->GetAlbedo(hitInfo.m_texCoord);
-                if (albedoColor.w <= perRayData.m_random()) optixIgnoreIntersection();
+                        static_cast<SurfaceMaterial *>(sbtData.m_material)->GetAlbedo(hit_info.tex_coord);
+                if (albedoColor.w <= perRayData.random()) optixIgnoreIntersection();
             }
                 break;
         }
@@ -30,51 +30,51 @@ namespace EvoEngine {
                 rayDirectionInternal.x, rayDirectionInternal.y, rayDirectionInternal.z);
 #pragma region Retrive information
         const auto &sbtData = *(const SBT *) optixGetSbtDataPointer();
-        auto hitInfo = sbtData.GetHitInfo(rayDirection);
+        auto hit_info = sbtData.GetHitInfo(rayDirection);
 #pragma endregion
         PerRayData <glm::vec3> &perRayData =
                 *GetRayDataPointer < PerRayData < glm::vec3 >> ();
-        unsigned hitCount = perRayData.m_hitCount + 1;
+        unsigned hitCount = perRayData.hit_count + 1;
 
         // start with some ambient term
         auto energy = glm::vec3(0.0f);
         uint32_t u0, u1;
         PackRayDataPointer(&perRayData, u0, u1);
-        perRayData.m_hitCount = hitCount;
-        perRayData.m_energy = glm::vec3(0.0f);
+        perRayData.hit_count = hitCount;
+        perRayData.energy = glm::vec3(0.0f);
         auto &environment = rayTracerProperties.m_environment;
         if (sbtData.m_materialType != MaterialType::CompressedBTF) {
             auto *material = static_cast<SurfaceMaterial *>(sbtData.m_material);
-            material->ApplyNormalTexture(hitInfo.m_normal, hitInfo.m_texCoord, hitInfo.m_tangent);
+            material->ApplyNormalTexture(hit_info.normal, hit_info.tex_coord, hit_info.tangent);
             float metallic =
-                    material->GetMetallic(hitInfo.m_texCoord);
+                    material->GetMetallic(hit_info.tex_coord);
             float roughness =
-                    material->GetRoughness(hitInfo.m_texCoord);
+                    material->GetRoughness(hit_info.tex_coord);
             glm::vec3 albedoColor;
             if (sbtData.m_materialType == MaterialType::Default) {
-                albedoColor = material->GetAlbedo(hitInfo.m_texCoord);
+                albedoColor = material->GetAlbedo(hit_info.tex_coord);
             } else {
-                albedoColor = hitInfo.m_color;
+                albedoColor = hit_info.color;
             }
             energy = glm::vec3(0.0f);
             float f = 1.0f;
             if (metallic >= 0.0f)
                 f = (metallic + 2) / (metallic + 1);
             if (environment.m_environmentalLightingType == EnvironmentalLightingType::SingleLightSource) {
-                glm::vec3 newRayDirection = RandomSampleHemisphere(perRayData.m_random,
+                glm::vec3 newRayDirection = RandomSampleHemisphere(perRayData.random,
                                                                    environment.m_sunDirection,
                                                                    1.0f -
                                                                    environment.m_lightSize);
                 energy += glm::vec3(environment.m_color) * environment.m_ambientLightIntensity * albedoColor;
                 const float NdotL = glm::dot(
-                        hitInfo.m_normal, newRayDirection);
+                        hit_info.normal, newRayDirection);
                 if (NdotL > 0.0f) {
                     uint32_t u0, u1;
                     PackRayDataPointer(&perRayData, u0, u1);
-                    perRayData.m_energy = glm::vec3(0.0f);
+                    perRayData.energy = glm::vec3(0.0f);
                     optixTrace(
                             optixTraversableHandle,
-                            make_float3(hitInfo.m_position.x, hitInfo.m_position.y, hitInfo.m_position.z),
+                            make_float3(hit_info.position.x, hit_info.position.y, hit_info.position.z),
                             make_float3(newRayDirection.x, newRayDirection.y, newRayDirection.z),
                             1e-3f, // tmin
                             1e20f, // tmax
@@ -90,21 +90,21 @@ namespace EvoEngine {
                             static_cast<int>(
                                     RayType::Radiance), // missSBTIndex
                             u0, u1);
-                    energy += perRayData.m_energy * NdotL * albedoColor;
+                    energy += perRayData.energy * NdotL * albedoColor;
                 }
-            } else if (perRayData.m_hitCount <=
+            } else if (perRayData.hit_count <=
                        rayTracerProperties.m_rayProperties
                                .m_bounces) {
                 bool needSample = false;
-                if (hitCount <= 1 && material->m_materialProperties.m_subsurfaceFactor > 0.0f &&
-                    material->m_materialProperties.m_subsurfaceRadius.x > 0.0f) {
+                if (hitCount <= 1 && material->m_materialProperties.subsurface_factor > 0.0f &&
+                    material->m_materialProperties.subsurface_radius.x > 0.0f) {
                     float3 incidentRayOrigin;
                     float3 newRayDirectionInternal;
                     glm::vec3 outNormal;
-                    needSample = BSSRDF(metallic, perRayData.m_random,
-                                        material->m_materialProperties.m_subsurfaceRadius.x, sbtData.m_handle,
+                    needSample = BSSRDF(metallic, perRayData.random,
+                                        material->m_materialProperties.subsurface_radius.x, sbtData.m_handle,
                                         optixTraversableHandle,
-                                        hitInfo.m_position, rayDirection, hitInfo.m_normal,
+                                        hit_info.position, rayDirection, hit_info.normal,
                                         incidentRayOrigin, newRayDirectionInternal, outNormal);
                     if (needSample) {
                         optixTrace(
@@ -121,8 +121,8 @@ namespace EvoEngine {
                                 static_cast<int>(
                                         RayType::Radiance), // missSBTIndex
                                 u0, u1);
-                        energy += material->m_materialProperties.m_subsurfaceFactor *
-                                  material->m_materialProperties.m_subsurfaceColor *
+                        energy += material->m_materialProperties.subsurface_color *
+                                  material->m_materialProperties.subsurface_color *
                                   glm::clamp(
                                           glm::abs(glm::dot(outNormal, glm::vec3(newRayDirectionInternal.x,
                                                                                  newRayDirectionInternal.y,
@@ -130,14 +130,14 @@ namespace EvoEngine {
                                           roughness +
                                           (1.0f - roughness) * f,
                                           0.0f, 1.0f) *
-                                  perRayData.m_energy;
+                                  perRayData.energy;
                     }
                 }
                 float3 newRayDirectionInternal;
-                BRDF(metallic, perRayData.m_random, rayDirection, hitInfo.m_normal, newRayDirectionInternal);
+                BRDF(metallic, perRayData.random, rayDirection, hit_info.normal, newRayDirectionInternal);
                 optixTrace(
                         optixTraversableHandle,
-                        make_float3(hitInfo.m_position.x, hitInfo.m_position.y, hitInfo.m_position.z),
+                        make_float3(hit_info.position.x, hit_info.position.y, hit_info.position.z),
                         newRayDirectionInternal,
                         1e-3f, // tmin
                         1e20f, // tmax
@@ -151,52 +151,52 @@ namespace EvoEngine {
                         static_cast<int>(
                                 RayType::Radiance), // missSBTIndex
                         u0, u1);
-                energy += (1.0f - material->m_materialProperties.m_subsurfaceFactor) *
+                energy += (1.0f - material->m_materialProperties.subsurface_color) *
                           albedoColor *
                           glm::clamp(glm::abs(glm::dot(
-                                             hitInfo.m_normal, glm::vec3(newRayDirectionInternal.x,
+                                             hit_info.normal, glm::vec3(newRayDirectionInternal.x,
                                                                          newRayDirectionInternal.y,
                                                                          newRayDirectionInternal.z))) *
                                      roughness +
                                      (1.0f - roughness) * f,
                                      0.0f, 1.0f) *
-                          perRayData.m_energy;
+                          perRayData.energy;
             }
             if (hitCount == 1) {
-                perRayData.m_normal = hitInfo.m_normal;
-                perRayData.m_albedo = albedoColor;
-                perRayData.m_position = hitInfo.m_position;
+                perRayData.normal = hit_info.normal;
+                perRayData.albedo = albedoColor;
+                perRayData.position = hit_info.position;
             }
-            perRayData.m_energy =
+            perRayData.energy =
                     energy +
-                    static_cast<SurfaceMaterial *>(sbtData.m_material)->m_materialProperties.m_emission *
+                    static_cast<SurfaceMaterial *>(sbtData.m_material)->m_materialProperties.emission *
                     albedoColor;
 
         } else {
             glm::vec3 btfColor;
-            if (perRayData.m_hitCount <=
+            if (perRayData.hit_count <=
                 rayTracerProperties.m_rayProperties
                         .m_bounces) {
                 energy = glm::vec3(0.0f);
                 float f = 1.0f;
-                glm::vec3 reflected = Reflect(rayDirection, hitInfo.m_normal);
+                glm::vec3 reflected = Reflect(rayDirection, hit_info.normal);
                 if (environment.m_environmentalLightingType == EnvironmentalLightingType::SingleLightSource) {
-                    glm::vec3 newRayDirection = RandomSampleHemisphere(perRayData.m_random,
+                    glm::vec3 newRayDirection = RandomSampleHemisphere(perRayData.random,
                                                                        environment.m_sunDirection,
                                                                        1.0f -
                                                                        environment.m_lightSize);
                     static_cast<SurfaceCompressedBTF *>(sbtData.m_material)
-                            ->GetValue(hitInfo.m_texCoord, rayDirection, newRayDirection, hitInfo.m_normal,
-                                       hitInfo.m_tangent,
+                            ->GetValue(hit_info.tex_coord, rayDirection, newRayDirection, hit_info.normal,
+                                       hit_info.tangent,
                                        btfColor,
                                        false /*(perRayData.m_printInfo && sampleID == 0)*/);
                     energy += glm::vec3(environment.m_color) * environment.m_ambientLightIntensity * btfColor;
                     const float NdotL = glm::dot(
-                            hitInfo.m_normal, newRayDirection);
+                            hit_info.normal, newRayDirection);
                     if (NdotL > 0.0f) {
 
-                        auto origin = hitInfo.m_position;
-                        origin += hitInfo.m_normal * 1e-3f;
+                        auto origin = hit_info.position;
+                        origin += hit_info.normal * 1e-3f;
                         float3 incidentRayOrigin = make_float3(origin.x, origin.y, origin.z);
                         float3 newRayDirectionInternal =
                                 make_float3(newRayDirection.x, newRayDirection.y, newRayDirection.z);
@@ -217,17 +217,17 @@ namespace EvoEngine {
                                 static_cast<int>(
                                         RayType::Radiance), // missSBTIndex
                                 u0, u1);
-                        energy += perRayData.m_energy * NdotL * btfColor;
+                        energy += perRayData.energy * NdotL * btfColor;
                     }
                 } else {
-                    glm::vec3 newRayDirection = RandomSampleHemisphere(perRayData.m_random, reflected, 0.0f);
+                    glm::vec3 newRayDirection = RandomSampleHemisphere(perRayData.random, reflected, 0.0f);
                     static_cast<SurfaceCompressedBTF *>(sbtData.m_material)
-                            ->GetValue(hitInfo.m_texCoord, rayDirection, newRayDirection, hitInfo.m_normal,
-                                       hitInfo.m_tangent,
+                            ->GetValue(hit_info.tex_coord, rayDirection, newRayDirection, hit_info.normal,
+                                       hit_info.tangent,
                                        btfColor,
                                        false /*(perRayData.m_printInfo && sampleID == 0)*/);
-                    auto origin = hitInfo.m_position;
-                    origin += hitInfo.m_normal * 1e-3f;
+                    auto origin = hit_info.position;
+                    origin += hit_info.normal * 1e-3f;
                     float3 incidentRayOrigin = make_float3(origin.x, origin.y, origin.z);
                     float3 newRayDirectionInternal =
                             make_float3(newRayDirection.x, newRayDirection.y, newRayDirection.z);
@@ -246,16 +246,16 @@ namespace EvoEngine {
                             static_cast<int>(
                                     RayType::Radiance), // missSBTIndex
                             u0, u1);
-                    energy += btfColor * perRayData.m_energy;
+                    energy += btfColor * perRayData.energy;
                 }
 
             }
             if (hitCount == 1) {
-                perRayData.m_normal = hitInfo.m_normal;
-                perRayData.m_albedo = btfColor;
-                perRayData.m_position = hitInfo.m_position;
+                perRayData.normal = hit_info.normal;
+                perRayData.albedo = btfColor;
+                perRayData.position = hit_info.position;
             }
-            perRayData.m_energy = energy;
+            perRayData.energy = energy;
         }
     }
 
@@ -270,6 +270,6 @@ namespace EvoEngine {
         glm::vec3 environmentalLightColor = CalculateEnvironmentalLight(
                 rayOrig, rayDirection,
                 environment);
-        perRayData.m_albedo = perRayData.m_energy = environmentalLightColor;
+        perRayData.albedo = perRayData.energy = environmentalLightColor;
     }
 }

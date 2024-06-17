@@ -1,7 +1,7 @@
 #pragma once
 #include "SharedCoordinates.cuh"
 
-namespace EvoEngine {
+namespace evo_engine {
     struct VectorColor {
         // the index from which we start the search
         int m_startIndex;

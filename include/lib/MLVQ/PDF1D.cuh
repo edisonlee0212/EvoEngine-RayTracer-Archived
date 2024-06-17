@@ -3,7 +3,7 @@
 #include "SharedCoordinates.cuh"
 
 #define HERMITE_INTERPOLANT
-namespace EvoEngine {
+namespace evo_engine {
     struct PDF1D {
         // the number of values for 1D function
         int m_numOfBeta;

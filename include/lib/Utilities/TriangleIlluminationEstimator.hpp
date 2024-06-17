@@ -1,26 +1,26 @@
 #pragma once
-#include "LightProbeGroup.hpp"
 #include "evoengine-pch.hpp"
+
 #include "Application.hpp"
+#include "LightProbeGroup.hpp"
 
 #include "CUDAModule.hpp"
 #include "IPrivateComponent.hpp"
 
-using namespace EvoEngine;
-namespace EvoEngine {
-    class TriangleIlluminationEstimator : public IPrivateComponent {
-        LightProbeGroup m_lightProbeGroup;
-    public:
-        void PrepareLightProbeGroup();
-        void SampleLightProbeGroup(const RayProperties& rayProperties, int seed, float pushNormalDistance);
-        float m_totalArea = 0.0f;
-        glm::vec3 m_totalFlux = glm::vec3(0.0f);
-        glm::vec3 m_averageFlux = glm::vec3(0.0f);
-        bool OnInspect(const std::shared_ptr<EditorLayer>& editorLayer) override;
+namespace evo_engine {
+class TriangleIlluminationEstimator : public IPrivateComponent {
+  LightProbeGroup light_probe_group_;
 
-        void Serialize(YAML::Emitter &out) const override;
-        void Deserialize(const YAML::Node &in) override;
-    };
+ public:
+  void PrepareLightProbeGroup();
+  void SampleLightProbeGroup(const RayProperties& ray_properties, int seed, float push_normal_distance);
+  float total_area = 0.0f;
+  glm::vec3 total_flux = glm::vec3(0.0f);
+  glm::vec3 average_flux = glm::vec3(0.0f);
+  bool OnInspect(const std::shared_ptr<EditorLayer>& editor_layer) override;
 
+  void Serialize(YAML::Emitter& out) const override;
+  void Deserialize(const YAML::Node& in) override;
+};
 
-} // namespace SorghumFactory
+}  // namespace evo_engine

@@ -3,26 +3,24 @@
 //
 #include <Application.hpp>
 #include <EditorLayer.hpp>
-#include "WindowLayer.hpp"
-#include "RenderLayer.hpp"
 #include <RayTracerLayer.hpp>
-#include "BTFMeshRenderer.hpp"
-#include "TriangleIlluminationEstimator.hpp"
+#include "RenderLayer.hpp"
+#include "WindowLayer.hpp"
 
-using namespace EvoEngine;
+using namespace evo_engine;
 
 int main() {
-    ApplicationInfo applicationInfo;
+  const ApplicationInfo application_info;
 
-    Application::PushLayer<WindowLayer>();
-    Application::PushLayer<EditorLayer>();
-    Application::PushLayer<RenderLayer>();
-    Application::PushLayer<RayTracerLayer>();
-    Application::Initialize(applicationInfo);
+  Application::PushLayer<WindowLayer>();
+  Application::PushLayer<EditorLayer>();
+  Application::PushLayer<RenderLayer>();
+  Application::PushLayer<RayTracerLayer>();
+  Application::Initialize(application_info);
 
 #pragma region Engine Loop
-    Application::Start();
-    Application::Run();
+  Application::Start();
+  Application::Run();
 #pragma endregion
-    Application::End();
+  Application::End();
 }

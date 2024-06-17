@@ -16,7 +16,7 @@
 #include "RenderTexture.hpp"
 #include "Graphics.hpp"
 #include "VulkanInterlop.hpp"
-using namespace EvoEngine;
+using namespace evo_engine;
 
 std::unique_ptr<RayTracer>& CudaModule::GetRayTracer() {
 	return GetInstance().m_rayTracer;
@@ -72,7 +72,7 @@ CudaModule::SamplePointCloud(const EnvironmentProperties& environmentProperties,
 	deviceSamples.Free();
 }
 
-std::shared_ptr<CudaImage> CudaModule::ImportTexture2D(const std::shared_ptr<EvoEngine::Texture2D>& texture2D)
+std::shared_ptr<CudaImage> CudaModule::ImportTexture2D(const std::shared_ptr<evo_engine::Texture2D>& texture2D)
 {
 	auto image = texture2D->GetImage();
 
@@ -92,7 +92,7 @@ std::shared_ptr<CudaImage> CudaModule::ImportTexture2D(const std::shared_ptr<Evo
 		image->GetVkImageMemHandle(VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT_KHR);
 #endif
 	VkMemoryRequirements vkMemoryRequirements = {};
-	vkGetImageMemoryRequirements(EvoEngine::Graphics::GetVkDevice(), image->GetVkImage(), &vkMemoryRequirements);
+	vkGetImageMemoryRequirements(evo_engine::Graphics::GetVkDevice(), image->GetVkImage(), &vkMemoryRequirements);
 	size_t totalImageMemSize = vkMemoryRequirements.size;
 	cudaExtMemHandleDesc.size = totalImageMemSize;
 
@@ -157,7 +157,7 @@ std::shared_ptr<CudaImage> CudaModule::ImportTexture2D(const std::shared_ptr<Evo
 	texDescr.addressMode[1] = cudaAddressModeWrap;
 	texDescr.addressMode[2] = cudaAddressModeWrap;
 
-	texDescr.maxAnisotropy = EvoEngine::Graphics::GetVkPhysicalDeviceProperties().limits.maxSamplerAnisotropy;
+	texDescr.maxAnisotropy = evo_engine::Graphics::GetVkPhysicalDeviceProperties().limits.maxSamplerAnisotropy;
 
 	texDescr.minMipmapLevelClamp = 0;
 	texDescr.maxMipmapLevelClamp = static_cast<float>(image->GetMipLevels() - 1);
@@ -170,7 +170,7 @@ std::shared_ptr<CudaImage> CudaModule::ImportTexture2D(const std::shared_ptr<Evo
 	return cudaImage;
 }
 
-std::shared_ptr<CudaImage> CudaModule::ImportCubemap(const std::shared_ptr<EvoEngine::Cubemap>& cubemap)
+std::shared_ptr<CudaImage> CudaModule::ImportCubemap(const std::shared_ptr<evo_engine::Cubemap>& cubemap)
 {
 	auto image = cubemap->GetImage();
 
@@ -190,7 +190,7 @@ std::shared_ptr<CudaImage> CudaModule::ImportCubemap(const std::shared_ptr<EvoEn
 		image->GetVkImageMemHandle(VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT_KHR);
 #endif
 	VkMemoryRequirements vkMemoryRequirements = {};
-	vkGetImageMemoryRequirements(EvoEngine::Graphics::GetVkDevice(), image->GetVkImage(), &vkMemoryRequirements);
+	vkGetImageMemoryRequirements(evo_engine::Graphics::GetVkDevice(), image->GetVkImage(), &vkMemoryRequirements);
 	size_t totalImageMemSize = vkMemoryRequirements.size;
 	cudaExtMemHandleDesc.size = totalImageMemSize;
 
@@ -255,7 +255,7 @@ std::shared_ptr<CudaImage> CudaModule::ImportCubemap(const std::shared_ptr<EvoEn
 	texDescr.addressMode[1] = cudaAddressModeWrap;
 	texDescr.addressMode[2] = cudaAddressModeWrap;
 
-	texDescr.maxAnisotropy = EvoEngine::Graphics::GetVkPhysicalDeviceProperties().limits.maxSamplerAnisotropy;
+	texDescr.maxAnisotropy = evo_engine::Graphics::GetVkPhysicalDeviceProperties().limits.maxSamplerAnisotropy;
 
 	texDescr.minMipmapLevelClamp = 0;
 	texDescr.maxMipmapLevelClamp = static_cast<float>(image->GetMipLevels() - 1);
@@ -269,7 +269,7 @@ std::shared_ptr<CudaImage> CudaModule::ImportCubemap(const std::shared_ptr<EvoEn
 }
 
 std::shared_ptr<CudaImage> CudaModule::ImportRenderTexture(
-	const std::shared_ptr<EvoEngine::RenderTexture>& renderTexture)
+	const std::shared_ptr<evo_engine::RenderTexture>& renderTexture)
 {
 	auto image = renderTexture->GetColorImage();
 
@@ -289,7 +289,7 @@ std::shared_ptr<CudaImage> CudaModule::ImportRenderTexture(
 		image->GetVkImageMemHandle(VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT_KHR);
 #endif
 	VkMemoryRequirements vkMemoryRequirements = {};
-	vkGetImageMemoryRequirements(EvoEngine::Graphics::GetVkDevice(), image->GetVkImage(), &vkMemoryRequirements);
+	vkGetImageMemoryRequirements(evo_engine::Graphics::GetVkDevice(), image->GetVkImage(), &vkMemoryRequirements);
 	size_t totalImageMemSize = vkMemoryRequirements.size;
 	cudaExtMemHandleDesc.size = totalImageMemSize;
 
@@ -354,7 +354,7 @@ std::shared_ptr<CudaImage> CudaModule::ImportRenderTexture(
 	texDescr.addressMode[1] = cudaAddressModeWrap;
 	texDescr.addressMode[2] = cudaAddressModeWrap;
 
-	texDescr.maxAnisotropy = EvoEngine::Graphics::GetVkPhysicalDeviceProperties().limits.maxSamplerAnisotropy;
+	texDescr.maxAnisotropy = evo_engine::Graphics::GetVkPhysicalDeviceProperties().limits.maxSamplerAnisotropy;
 
 	texDescr.minMipmapLevelClamp = 0;
 	texDescr.maxMipmapLevelClamp = static_cast<float>(image->GetMipLevels() - 1);
@@ -367,7 +367,7 @@ std::shared_ptr<CudaImage> CudaModule::ImportRenderTexture(
 	return cudaImage;
 }
 
-std::shared_ptr<CudaSemaphore> CudaModule::ImportSemaphore(const std::shared_ptr<EvoEngine::Semaphore>& semaphore)
+std::shared_ptr<CudaSemaphore> CudaModule::ImportSemaphore(const std::shared_ptr<evo_engine::Semaphore>& semaphore)
 {
 	auto cudaSemaphore = std::make_shared<CudaSemaphore>();
 

@@ -4,15 +4,15 @@
 #include "vector"
 
 struct cudaGraphicsResource;
-namespace EvoEngine {
+namespace evo_engine {
 
 /*! simple wrapper for creating, and managing a device-side CUDA
         buffer */
 class CudaBuffer {
 
 public:
-  void *m_dPtr = nullptr;
-  size_t m_sizeInBytes = 0;
+  void *d_ptr = nullptr;
+  size_t size_in_bytes = 0;
   /**
    * \brief Get CUDA Device pointer.
    * \return CUDA Device memory pointer.

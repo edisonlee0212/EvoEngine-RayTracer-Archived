@@ -20,17 +20,17 @@
 #include <Optix7.hpp>
 #include <RayDataDefinations.hpp>
 
-namespace EvoEngine {
+namespace evo_engine {
     typedef LinearCongruenceGenerator<16> Random;
 #pragma region Data
     template<typename T>
     struct PerRayData {
-        unsigned m_hitCount;
-        Random m_random;
-        T m_energy;
-        glm::vec3 m_normal;
-        glm::vec3 m_albedo;
-        glm::vec3 m_position;
+        unsigned hit_count;
+        Random random;
+        T energy;
+        glm::vec3 normal;
+        glm::vec3 albedo;
+        glm::vec3 position;
     };
 
 

@@ -2,7 +2,7 @@
 #include "SharedCoordinates.cuh"
 #include "VectorColor.cuh"
 
-namespace EvoEngine {
+namespace evo_engine {
     struct IndexAB {
         // current number of stored 1D index slices
         int m_numOfIndexSlices;

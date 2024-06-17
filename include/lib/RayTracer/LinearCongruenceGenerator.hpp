@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <vector>
-namespace EvoEngine {
+namespace evo_engine {
 /*! simple 24-bit linear congruence generator */
 template <unsigned int N = 16> struct LinearCongruenceGenerator {
   __device__

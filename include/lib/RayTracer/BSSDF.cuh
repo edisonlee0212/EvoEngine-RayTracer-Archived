@@ -2,15 +2,15 @@
 
 #include "RayTracerUtilities.cuh"
 
-namespace EvoEngine {
+namespace evo_engine {
     struct SSHitRecord {
         glm::vec3 m_outPosition;
         glm::vec3 m_outNormal;
     };
 
     struct SSPerRayData {
-        unsigned long long m_handle;
-        Random m_random;
+        unsigned long long handle;
+        Random random;
         int m_recordSize = 0;
         SSHitRecord m_records[4];
     };
@@ -19,20 +19,20 @@ namespace EvoEngine {
         const auto &sbtData = *(const SBT *) optixGetSbtDataPointer();
         SSPerRayData &perRayData =
                 *GetRayDataPointer<SSPerRayData>();
-        if (perRayData.m_handle != sbtData.m_handle) {
+        if (perRayData.handle != sbtData.m_handle) {
             optixIgnoreIntersection();
         }
         if (perRayData.m_recordSize >= 4) optixTerminateRay();
         const float3 rayDirectionInternal = optixGetWorldRayDirection();
         glm::vec3 rayDirection = glm::vec3(
                 rayDirectionInternal.x, rayDirectionInternal.y, rayDirectionInternal.z);
-        auto hitInfo = sbtData.GetHitInfo(rayDirection, false);
+        auto hit_info = sbtData.GetHitInfo(rayDirection, false);
 
         static_cast<SurfaceMaterial *>(sbtData.m_material)
-                ->ApplyNormalTexture(hitInfo.m_normal, hitInfo.m_texCoord, hitInfo.m_tangent);
+                ->ApplyNormalTexture(hit_info.normal, hit_info.tex_coord, hit_info.tangent);
 
-        perRayData.m_records[perRayData.m_recordSize].m_outNormal = hitInfo.m_normal;
-        perRayData.m_records[perRayData.m_recordSize].m_outPosition = hitInfo.m_position;
+        perRayData.m_records[perRayData.m_recordSize].m_outNormal = hit_info.normal;
+        perRayData.m_records[perRayData.m_recordSize].m_outPosition = hit_info.position;
         perRayData.m_recordSize++;
     }
 
@@ -55,9 +55,9 @@ namespace EvoEngine {
                                                             2.0f * glm::pi<float>() * random(), diskNormal);
         glm::vec3 sampleDirection = -diskNormal;
         SSPerRayData perRayData;
-        perRayData.m_handle = handle;
+        perRayData.handle = handle;
         perRayData.m_recordSize = 0;
-        perRayData.m_random = random;
+        perRayData.random = random;
         uint32_t u0, u1;
         PackRayDataPointer(&perRayData, u0, u1);
         optixTrace(
@@ -75,7 +75,7 @@ namespace EvoEngine {
                         RayType::SpacialSampling), // missSBTIndex
                 u0, u1);
         if (perRayData.m_recordSize > 0) {
-            int index = glm::clamp((int)(perRayData.m_random() * perRayData.m_recordSize), 0, perRayData.m_recordSize - 1);
+            int index = glm::clamp((int)(perRayData.random() * perRayData.m_recordSize), 0, perRayData.m_recordSize - 1);
             if (glm::distance(inPosition, perRayData.m_records[index].m_outPosition) <= radius) {
                 outNormal = perRayData.m_records[index].m_outNormal;
                 auto out = perRayData.m_records[index].m_outPosition + outNormal * 0.01f;

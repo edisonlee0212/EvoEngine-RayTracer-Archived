@@ -12,7 +12,7 @@
  * instead.
  */
 #define PDF2D PDF2DSeperate
-namespace EvoEngine {
+namespace evo_engine {
     struct PDF2DSeperate {
         // the used number of 2D functions
         int m_numOfPdf2D;

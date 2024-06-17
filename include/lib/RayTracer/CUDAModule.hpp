@@ -6,7 +6,7 @@
 
 #include "VulkanInterlop.hpp"
 
-namespace EvoEngine
+namespace evo_engine
 {
 	class Semaphore;
 	class Image;
@@ -16,7 +16,7 @@ namespace EvoEngine
 }
 
 struct cudaGraphicsResource;
-namespace EvoEngine {
+namespace evo_engine {
     class CudaModule {
 #pragma region Class related
 
@@ -54,9 +54,9 @@ namespace EvoEngine {
         static void
         SamplePointCloud(const EnvironmentProperties &environmentProperties,
                          std::vector<PointCloudSample> &samples);
-        static std::shared_ptr<CudaImage> ImportTexture2D(const std::shared_ptr<EvoEngine::Texture2D>& texture2D);
-        static std::shared_ptr<CudaImage> ImportCubemap(const std::shared_ptr<EvoEngine::Cubemap>& cubemap);
-        static std::shared_ptr<CudaImage> ImportRenderTexture(const std::shared_ptr<EvoEngine::RenderTexture>& renderTexture);
-        static std::shared_ptr<CudaSemaphore> ImportSemaphore(const std::shared_ptr<EvoEngine::Semaphore>& semaphore);
+        static std::shared_ptr<CudaImage> ImportTexture2D(const std::shared_ptr<evo_engine::Texture2D>& texture2D);
+        static std::shared_ptr<CudaImage> ImportCubemap(const std::shared_ptr<evo_engine::Cubemap>& cubemap);
+        static std::shared_ptr<CudaImage> ImportRenderTexture(const std::shared_ptr<evo_engine::RenderTexture>& renderTexture);
+        static std::shared_ptr<CudaSemaphore> ImportSemaphore(const std::shared_ptr<evo_engine::Semaphore>& semaphore);
     };
 } // namespace EvoEngine

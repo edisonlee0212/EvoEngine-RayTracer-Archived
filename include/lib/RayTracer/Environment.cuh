@@ -2,7 +2,7 @@
 
 #include "RayTracerUtilities.cuh"
 
-namespace EvoEngine {
+namespace evo_engine {
 #pragma region Sky illuminance
 
     static __forceinline__ __device__ float

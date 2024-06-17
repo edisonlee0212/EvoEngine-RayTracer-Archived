@@ -5,7 +5,7 @@
 #include "SharedCoordinates.cuh"
 #include "glm/glm.hpp"
 
-namespace EvoEngine {
+namespace evo_engine {
     template<typename T>
     struct PDF4D {
         // the used number of 4D functions

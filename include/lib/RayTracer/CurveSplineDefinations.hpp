@@ -34,81 +34,81 @@
 // First order polynomial interpolator
 //
 
-__device__ __forceinline__ EvoEngine::StrandPoint operator/(const EvoEngine::StrandPoint &lhs, const float &rhs) {
-    EvoEngine::StrandPoint retVal;
-    retVal.m_thickness = lhs.m_thickness / rhs;
-    retVal.m_position = lhs.m_position / rhs;
-    retVal.m_color = lhs.m_color / rhs;
-    retVal.m_texCoord = lhs.m_texCoord / rhs;
-    return retVal;
+__device__ __forceinline__ evo_engine::StrandPoint operator/(const evo_engine::StrandPoint &lhs, const float &rhs) {
+    evo_engine::StrandPoint ret_val;
+    ret_val.thickness = lhs.thickness / rhs;
+    ret_val.position = lhs.position / rhs;
+    ret_val.color = lhs.color / rhs;
+    ret_val.tex_coord = lhs.tex_coord / rhs;
+    return ret_val;
 }
 
-__device__ __forceinline__ EvoEngine::StrandPoint operator*(const EvoEngine::StrandPoint &lhs, const float &rhs) {
-    EvoEngine::StrandPoint retVal;
-    retVal.m_thickness = lhs.m_thickness * rhs;
-    retVal.m_position = lhs.m_position * rhs;
-    retVal.m_color = lhs.m_color * rhs;
-    retVal.m_texCoord = lhs.m_texCoord * rhs;
-    return retVal;
+__device__ __forceinline__ evo_engine::StrandPoint operator*(const evo_engine::StrandPoint &lhs, const float &rhs) {
+    evo_engine::StrandPoint ret_val;
+    ret_val.thickness = lhs.thickness * rhs;
+    ret_val.position = lhs.position * rhs;
+    ret_val.color = lhs.color * rhs;
+    ret_val.tex_coord = lhs.tex_coord * rhs;
+    return ret_val;
 }
 
-__device__ __forceinline__ EvoEngine::StrandPoint
-operator+(const EvoEngine::StrandPoint &lhs, const EvoEngine::StrandPoint &rhs) {
-    EvoEngine::StrandPoint retVal;
-    retVal.m_thickness = lhs.m_thickness + rhs.m_thickness;
-    retVal.m_position = lhs.m_position + rhs.m_position;
-    retVal.m_color = lhs.m_color + rhs.m_color;
-    retVal.m_texCoord = lhs.m_texCoord + rhs.m_texCoord;
-    return retVal;
+__device__ __forceinline__ evo_engine::StrandPoint
+operator+(const evo_engine::StrandPoint &lhs, const evo_engine::StrandPoint &rhs) {
+    evo_engine::StrandPoint ret_val;
+    ret_val.thickness = lhs.thickness + rhs.thickness;
+    ret_val.position = lhs.position + rhs.position;
+    ret_val.color = lhs.color + rhs.color;
+    ret_val.tex_coord = lhs.tex_coord + rhs.tex_coord;
+    return ret_val;
 }
 
-__device__ __forceinline__ EvoEngine::StrandPoint
-operator-(const EvoEngine::StrandPoint &lhs, const EvoEngine::StrandPoint &rhs) {
-    EvoEngine::StrandPoint retVal;
-    retVal.m_thickness = lhs.m_thickness - rhs.m_thickness;
-    retVal.m_position = lhs.m_position - rhs.m_position;
-    retVal.m_color = lhs.m_color - rhs.m_color;
-    retVal.m_texCoord = lhs.m_texCoord - rhs.m_texCoord;
-    return retVal;
+__device__ __forceinline__ evo_engine::StrandPoint
+operator-(const evo_engine::StrandPoint &lhs, const evo_engine::StrandPoint &rhs) {
+    evo_engine::StrandPoint ret_val;
+    ret_val.thickness = lhs.thickness - rhs.thickness;
+    ret_val.position = lhs.position - rhs.position;
+    ret_val.color = lhs.color - rhs.color;
+    ret_val.tex_coord = lhs.tex_coord - rhs.tex_coord;
+    return ret_val;
 }
 
 struct LinearBSplineSegment {
     __device__ __forceinline__ LinearBSplineSegment() {}
 
-    __device__ __forceinline__ LinearBSplineSegment(const EvoEngine::StrandPoint *q) {
+    __device__ __forceinline__ LinearBSplineSegment(const evo_engine::StrandPoint *q) {
         p[0] = q[0];
         p[1] = q[1] - q[0];  // pre-transform p[] for fast evaluation
     }
 
-    __device__ __forceinline__ glm::vec4 color(const float &u) const { return p[0].m_color + p[1].m_color * u; }
+    __device__ __forceinline__ glm::vec4 color(const float &u) const { return p[0].color + p[1].color * u; }
 
-    __device__ __forceinline__ glm::vec2 texCoord(const float &u) const { return glm::vec2(p[0].m_texCoord + p[1].m_texCoord * u, 0.0f); }
+    __device__ __forceinline__ glm::vec2 texCoord(const float &u) const { return glm::vec2(p[0].tex_coord + p[1].tex_coord * u, 0.0f); }
 
-    __device__ __forceinline__ float radius(const float &u) const { return p[0].m_thickness + p[1].m_thickness * u; }
+    __device__ __forceinline__ float radius(const float &u) const { return p[0].thickness + p[1].thickness * u; }
 
-    __device__ __forceinline__ glm::vec3 position(float u) const { return p[0].m_position + u * p[1].m_position; }
+    __device__ __forceinline__ glm::vec3 position(float u) const { return p[0].position + u * p[1].position; }
 
     __device__ __forceinline__ float min_radius(float u1, float u2) const {
         return fminf(radius(u1), radius(u2));
     }
 
     __device__ __forceinline__ float max_radius(float u1, float u2) const {
-        if (!p[1].m_thickness)
-            return p[0].m_thickness;  // a quick bypass for constant width
+        if (!p[1].thickness)
+            return p[0].thickness;  // a quick bypass for constant width
         return fmaxf(radius(u1), radius(u2));
     }
 
-    __device__ __forceinline__ glm::vec3 velocity(float u) const { return p[1].m_position; }
+    __device__ __forceinline__ glm::vec3 velocity(float u) const { return p[1].position; }
 
-    __device__ __forceinline__ float velocity_radius(float u) const { return p[1].m_thickness; }
+    __device__ __forceinline__ float velocity_radius(float u) const { return p[1].thickness; }
 
     __device__ __forceinline__ glm::vec3 acceleration(float u) const { return glm::vec3(0.0f); }
 
     __device__ __forceinline__ float acceleration_radius(float u) const { return 0.0f; }
 
-    __device__ __forceinline__ float derivative_of_radius(float u) const { return p[1].m_thickness; }
+    __device__ __forceinline__ float derivative_of_radius(float u) const { return p[1].thickness; }
 
-    EvoEngine::StrandPoint p[2];  // pre-transformed "control points" for fast evaluation
+    evo_engine::StrandPoint p[2];  // pre-transformed "control points" for fast evaluation
 };
 
 //
@@ -117,7 +117,7 @@ struct LinearBSplineSegment {
 struct QuadraticBSplineSegment {
     __device__ __forceinline__ QuadraticBSplineSegment() {}
 
-    __device__ __forceinline__ QuadraticBSplineSegment(const EvoEngine::StrandPoint *q) {
+    __device__ __forceinline__ QuadraticBSplineSegment(const evo_engine::StrandPoint *q) {
         // pre-transform control-points for fast evaluation
         p[0] = q[1] / 2.0f + q[0] / 2.0f;
         p[1] = q[1] - q[0];
@@ -128,47 +128,47 @@ struct QuadraticBSplineSegment {
     }
 
     __device__ __forceinline__ glm::vec4 color(const float &u) const {
-        return p[0].m_color + u * p[1].m_color + u * u * p[2].m_color; }
+        return p[0].color + u * p[1].color + u * u * p[2].color; }
 
     __device__ __forceinline__ glm::vec2 texCoord(const float& u) const {
-        return glm::vec2(p[0].m_texCoord + u * p[1].m_texCoord + u * u * p[2].m_texCoord, 0.0f);
+        return glm::vec2(p[0].tex_coord + u * p[1].tex_coord + u * u * p[2].tex_coord, 0.0f);
     }
 
     __device__ __forceinline__ glm::vec3 position(float u) const {
-        return p[0].m_position + u * p[1].m_position + u * u * p[2].m_position;
+        return p[0].position + u * p[1].position + u * u * p[2].position;
     }
 
     __device__ __forceinline__ float radius(float u) const {
-        return p[0].m_thickness + u * (p[1].m_thickness + u * p[2].m_thickness);
+        return p[0].thickness + u * (p[1].thickness + u * p[2].thickness);
     }
 
     __device__ __forceinline__ float min_radius(float u1, float u2) const {
-        float root1 = clamp(-0.5f * p[1].m_thickness / p[2].m_thickness, u1, u2);
+        float root1 = clamp(-0.5f * p[1].thickness / p[2].thickness, u1, u2);
         return fminf(fminf(radius(u1), radius(u2)), radius(root1));
     }
 
     __device__ __forceinline__ float max_radius(float u1, float u2) const {
-        if (!p[1].m_thickness && !p[2].m_thickness)
-            return p[0].m_thickness;  // a quick bypass for constant width
-        float root1 = clamp(-0.5f * p[1].m_thickness / p[2].m_thickness, u1, u2);
+        if (!p[1].thickness && !p[2].thickness)
+            return p[0].thickness;  // a quick bypass for constant width
+        float root1 = clamp(-0.5f * p[1].thickness / p[2].thickness, u1, u2);
         return fmaxf(fmaxf(radius(u1), radius(u2)), radius(root1));
     }
 
-    __device__ __forceinline__ glm::vec3 velocity(float u) const { return p[1].m_position + 2 * u * p[2].m_position; }
+    __device__ __forceinline__ glm::vec3 velocity(float u) const { return p[1].position + 2 * u * p[2].position; }
 
     __device__ __forceinline__ float velocity_radius(float u) const {
-        return p[1].m_thickness + 2 * u * p[2].m_thickness;
+        return p[1].thickness + 2 * u * p[2].thickness;
     }
 
-    __device__ __forceinline__ glm::vec3 acceleration(float u) const { return 2.0f * p[2].m_position; }
+    __device__ __forceinline__ glm::vec3 acceleration(float u) const { return 2.0f * p[2].position; }
 
-    __device__ __forceinline__ float acceleration_radius(float u) const { return 2.0f * p[2].m_thickness; }
+    __device__ __forceinline__ float acceleration_radius(float u) const { return 2.0f * p[2].thickness; }
 
     __device__ __forceinline__ float derivative_of_radius(float u) const {
-        return p[1].m_thickness + 2 * u * p[2].m_thickness;
+        return p[1].thickness + 2 * u * p[2].thickness;
     }
 
-    EvoEngine::StrandPoint p[3];  // pre-transformed "control points" for fast evaluation
+    evo_engine::StrandPoint p[3];  // pre-transformed "control points" for fast evaluation
 };
 
 //
@@ -177,7 +177,7 @@ struct QuadraticBSplineSegment {
 struct CubicBSplineSegment {
     __device__ __forceinline__ CubicBSplineSegment() {}
 
-    __device__ __forceinline__ CubicBSplineSegment(const EvoEngine::StrandPoint *q) {
+    __device__ __forceinline__ CubicBSplineSegment(const evo_engine::StrandPoint *q) {
         // pre-transform control points for fast evaluation
         p[0] = (q[2] + q[0]) / 6 + q[1] * (4.0f / 6.0f);
         p[1] = q[2] - q[0];
@@ -193,31 +193,31 @@ struct CubicBSplineSegment {
 
     __device__ __forceinline__ glm::vec4 color(float u) const {
         glm::vec3 q = terms(u);
-        return p[0].m_color + q.x * p[1].m_color + q.y * p[2].m_color + q.z * p[3].m_color;
+        return p[0].color + q.x * p[1].color + q.y * p[2].color + q.z * p[3].color;
     }
 
     __device__ __forceinline__ glm::vec2 texCoord(float u) const {
         glm::vec3 q = terms(u);
-        return glm::vec2(p[0].m_texCoord + q.x * p[1].m_texCoord + q.y * p[2].m_texCoord + q.z * p[3].m_texCoord, 0.0f);
+        return glm::vec2(p[0].tex_coord + q.x * p[1].tex_coord + q.y * p[2].tex_coord + q.z * p[3].tex_coord, 0.0f);
     }
 
     __device__ __forceinline__ glm::vec3 position(float u) const {
         glm::vec3 q = terms(u);
-        return p[0].m_position + q.x * p[1].m_position + q.y * p[2].m_position + q.z * p[3].m_position;
+        return p[0].position + q.x * p[1].position + q.y * p[2].position + q.z * p[3].position;
     }
 
     __device__ __forceinline__ float radius(float u) const {
-        return p[0].m_thickness +
-               u * (p[1].m_thickness / 2.0f +
-                    u * ((p[2].m_thickness - p[1].m_thickness / 2.0f) +
-                         u * (p[1].m_thickness - 4.0f * p[2].m_thickness + p[3].m_thickness) / 6.0f));
+        return p[0].thickness +
+               u * (p[1].thickness / 2.0f +
+                    u * ((p[2].thickness - p[1].thickness / 2.0f) +
+                         u * (p[1].thickness - 4.0f * p[2].thickness + p[3].thickness) / 6.0f));
     }
 
     __device__ __forceinline__ float min_radius(float u1, float u2) const {
         // a + 2 b u - c u^2
-        float a = p[1].m_thickness;
-        float b = 2.0f * p[2].m_thickness - p[1].m_thickness;
-        float c = 4.0f * p[2].m_thickness - p[1].m_thickness - p[3].m_thickness;
+        float a = p[1].thickness;
+        float b = 2.0f * p[2].thickness - p[1].thickness;
+        float c = 4.0f * p[2].thickness - p[1].thickness - p[3].thickness;
         float rmin = fminf(radius(u1), radius(u2));
         if (fabsf(c) < 1e-5f) {
             float root1 = clamp(-0.5f * a / b, u1, u2);
@@ -232,12 +232,12 @@ struct CubicBSplineSegment {
     }
 
     __device__ __forceinline__ float max_radius(float u1, float u2) const {
-        if (!p[1].m_thickness && !p[2].m_thickness && !p[3].m_thickness)
-            return p[0].m_thickness;  // a quick bypass for constant width
+        if (!p[1].thickness && !p[2].thickness && !p[3].thickness)
+            return p[0].thickness;  // a quick bypass for constant width
         // a + 2 b u - c u^2
-        float a = p[1].m_thickness;
-        float b = 2 * p[2].m_thickness - p[1].m_thickness;
-        float c = 4 * p[2].m_thickness - p[1].m_thickness - p[3].m_thickness;
+        float a = p[1].thickness;
+        float b = 2 * p[2].thickness - p[1].thickness;
+        float c = 4 * p[2].thickness - p[1].thickness - p[3].thickness;
         float rmax = fmaxf(radius(u1), radius(u2));
         if (fabsf(c) < 1e-5f) {
             float root1 = clamp(-0.5f * a / b, u1, u2);
@@ -258,7 +258,7 @@ struct CubicBSplineSegment {
         if (u == 1)
             u = 0.999999f;
         float v = 1 - u;
-        return 0.5f * v * v * p[1].m_position + 2.0f * v * u * p[2].m_position + 0.5f * u * u * p[3].m_position;
+        return 0.5f * v * v * p[1].position + 2.0f * v * u * p[2].position + 0.5f * u * u * p[3].position;
     }
 
     __device__ __forceinline__ float velocity_radius(float u) const {
@@ -268,25 +268,25 @@ struct CubicBSplineSegment {
         if (u == 1)
             u = 0.999999f;
         float v = 1.0f - u;
-        return 0.5f * v * v * p[1].m_thickness + 2.0f * v * u * p[2].m_thickness + 0.5f * u * u * p[3].m_thickness;
+        return 0.5f * v * v * p[1].thickness + 2.0f * v * u * p[2].thickness + 0.5f * u * u * p[3].thickness;
     }
 
     __device__ __forceinline__ glm::vec3 acceleration(float u) const {
-        return 2.0f * p[2].m_position - p[1].m_position +
-               (p[1].m_position - 4.0f * p[2].m_position + p[3].m_position) * u;
+        return 2.0f * p[2].position - p[1].position +
+               (p[1].position - 4.0f * p[2].position + p[3].position) * u;
     }
 
     __device__ __forceinline__ float acceleration_radius(float u) const {
-        return 2.0f * p[2].m_thickness - p[1].m_thickness +
-               (p[1].m_thickness - 4.0f * p[2].m_thickness + p[3].m_thickness) * u;
+        return 2.0f * p[2].thickness - p[1].thickness +
+               (p[1].thickness - 4.0f * p[2].thickness + p[3].thickness) * u;
     }
 
     __device__ __forceinline__ float derivative_of_radius(float u) const {
         float v = 1.0f - u;
-        return 0.5f * v * v * p[1].m_thickness + 2.0f * v * u * p[2].m_thickness + 0.5f * u * u * p[3].m_thickness;
+        return 0.5f * v * v * p[1].thickness + 2.0f * v * u * p[2].thickness + 0.5f * u * u * p[3].thickness;
     }
 
-    EvoEngine::StrandPoint p[4];  // pre-transformed "control points" for fast evaluation
+    evo_engine::StrandPoint p[4];  // pre-transformed "control points" for fast evaluation
 };
 
 // Compute curve primitive surface normal in object space.
@@ -350,11 +350,11 @@ template<int type = 1>
 __device__ __forceinline__ glm::vec3 surfaceNormal(const LinearBSplineSegment &bc, float u, glm::vec3 &ps) {
     glm::vec3 normal;
     if (u == 0.0f) {
-        normal = ps - bc.p[0].m_position;  // special handling for round endcaps
+        normal = ps - bc.p[0].position;  // special handling for round endcaps
     } else if (u >= 1.0f) {
         // reconstruct second control point (Note: the interpolator pre-transforms
         // the control-points to speed up repeated evaluation.
-        const glm::vec3 p1 = bc.p[1].m_position + bc.p[0].m_position;
+        const glm::vec3 p1 = bc.p[1].position + bc.p[0].position;
         normal = ps - p1;  // special handling for round endcaps
     } else {
         // ps is a point that is near the curve's offset surface,

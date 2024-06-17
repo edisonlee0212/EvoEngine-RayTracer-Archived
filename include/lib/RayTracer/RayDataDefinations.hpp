@@ -9,17 +9,17 @@
 #include "optix_device.h"
 #include "CurveSplineDefinations.hpp"
 #include "HitInfo.hpp"
-namespace EvoEngine {
+namespace evo_engine {
     static __forceinline__ __device__ float3 GetHitPoint() {
         const float t = optixGetRayTmax();
-        const float3 rayOrigin = optixGetWorldRayOrigin();
-        const float3 rayDirection = optixGetWorldRayDirection();
+        const float3 ray_origin = optixGetWorldRayOrigin();
+        const float3 ray_direction = optixGetWorldRayDirection();
 
-        return rayOrigin + rayDirection * t;
+        return ray_origin + ray_direction * t;
     }
 
     struct Curves {
-        EvoEngine::StrandPoint *m_strandPoints = nullptr;
+        evo_engine::StrandPoint *strand_points = nullptr;
         //The starting index of point where this segment starts;
         int *m_segments = nullptr;
         //The start and end's U for current segment for entire strand.
@@ -30,89 +30,89 @@ namespace EvoEngine {
 
         // Get curve hit-point in world coordinates.
         __device__ HitInfo GetHitInfo() const {
-            HitInfo hitInfo;
-            const unsigned int primitiveIndex = optixGetPrimitiveIndex();
+            HitInfo hit_info;
+            const unsigned int primitive_index = optixGetPrimitiveIndex();
             auto type = optixGetPrimitiveType();
-            float3 hitPointInternal = GetHitPoint();
+            float3 hit_point_internal = GetHitPoint();
             // interpolators work in object space
-            hitPointInternal = optixTransformPointFromWorldToObjectSpace(hitPointInternal);
-            hitInfo.m_position = glm::vec3(hitPointInternal.x, hitPointInternal.y, hitPointInternal.z);
+            hit_point_internal = optixTransformPointFromWorldToObjectSpace(hit_point_internal);
+            hit_info.position = glm::vec3(hit_point_internal.x, hit_point_internal.y, hit_point_internal.z);
 
             switch (type) {
                 case OPTIX_PRIMITIVE_TYPE_ROUND_LINEAR: {
-                    LinearBSplineSegment interpolator(&m_strandPoints[m_segments[primitiveIndex]]);
+                    LinearBSplineSegment interpolator(&strand_points[m_segments[primitive_index]]);
                     const auto u = optixGetCurveParameter();
-                    hitInfo.m_normal = surfaceNormal(interpolator, u, hitInfo.m_position);
-                    hitInfo.m_texCoord = interpolator.texCoord(u);
-                    hitInfo.m_color = interpolator.color(u);
+                    hit_info.normal = surfaceNormal(interpolator, u, hit_info.position);
+                    hit_info.tex_coord = interpolator.texCoord(u);
+                    hit_info.color = interpolator.color(u);
                 }
                     break;
                 case OPTIX_PRIMITIVE_TYPE_ROUND_QUADRATIC_BSPLINE: {
-                    QuadraticBSplineSegment interpolator(&m_strandPoints[m_segments[primitiveIndex]]);
+                    QuadraticBSplineSegment interpolator(&strand_points[m_segments[primitive_index]]);
                     const auto u = optixGetCurveParameter();
-                    hitInfo.m_normal = surfaceNormal(interpolator, u, hitInfo.m_position);
-                    hitInfo.m_texCoord = interpolator.texCoord(u);
-                    hitInfo.m_color = interpolator.color(u);
+                    hit_info.normal = surfaceNormal(interpolator, u, hit_info.position);
+                    hit_info.tex_coord = interpolator.texCoord(u);
+                    hit_info.color = interpolator.color(u);
                 }
                     break;
                 case OPTIX_PRIMITIVE_TYPE_ROUND_CUBIC_BSPLINE: {
-                    CubicBSplineSegment interpolator(&m_strandPoints[m_segments[primitiveIndex]]);
+                    CubicBSplineSegment interpolator(&strand_points[m_segments[primitive_index]]);
                     const auto u = optixGetCurveParameter();
-                    hitInfo.m_normal = surfaceNormal(interpolator, u, hitInfo.m_position);
-                    hitInfo.m_texCoord = interpolator.texCoord(u);
-                    hitInfo.m_color = interpolator.color(u);
+                    hit_info.normal = surfaceNormal(interpolator, u, hit_info.position);
+                    hit_info.tex_coord = interpolator.texCoord(u);
+                    hit_info.color = interpolator.color(u);
                 }
                     break;
 
             }
-            hitInfo.m_data = glm::vec4(0.0f);
-            hitInfo.m_tangent = glm::cross(hitInfo.m_normal,
-                                           glm::vec3(hitInfo.m_normal.y, hitInfo.m_normal.z, hitInfo.m_normal.x));
-            return hitInfo;
+            hit_info.data = glm::vec4(0.0f);
+            hit_info.tangent = glm::cross(hit_info.normal,
+                                           glm::vec3(hit_info.normal.y, hit_info.normal.z, hit_info.normal.x));
+            return hit_info;
         }
 
         // Compute surface normal of quadratic primitive in world space.
-        __forceinline__ __device__ glm::vec3 NormalLinear(const int primitiveIndex) const {
-            LinearBSplineSegment interpolator(&m_strandPoints[m_segments[primitiveIndex]]);
-            float3 hitPointInternal = GetHitPoint();
+        __forceinline__ __device__ glm::vec3 NormalLinear(const int primitive_index) const {
+            LinearBSplineSegment interpolator(&strand_points[m_segments[primitive_index]]);
+            float3 hit_point_internal = GetHitPoint();
             // interpolators work in object space
-            hitPointInternal = optixTransformPointFromWorldToObjectSpace(hitPointInternal);
-            glm::vec3 hitPoint = glm::vec3(hitPointInternal.x, hitPointInternal.y, hitPointInternal.z);
-            const auto normal = surfaceNormal(interpolator, optixGetCurveParameter(), hitPoint);
+            hit_point_internal = optixTransformPointFromWorldToObjectSpace(hit_point_internal);
+            glm::vec3 hit_point = glm::vec3(hit_point_internal.x, hit_point_internal.y, hit_point_internal.z);
+            const auto normal = surfaceNormal(interpolator, optixGetCurveParameter(), hit_point);
             return normal;
         }
 
         // Compute surface normal of quadratic primitive in world space.
-        __forceinline__ __device__ glm::vec3 NormalQuadratic(const int primitiveIndex) const {
-            QuadraticBSplineSegment interpolator(&m_strandPoints[m_segments[primitiveIndex]]);
-            float3 hitPointInternal = GetHitPoint();
+        __forceinline__ __device__ glm::vec3 NormalQuadratic(const int primitive_index) const {
+            QuadraticBSplineSegment interpolator(&strand_points[m_segments[primitive_index]]);
+            float3 hit_point_internal = GetHitPoint();
             // interpolators work in object space
-            hitPointInternal = optixTransformPointFromWorldToObjectSpace(hitPointInternal);
-            glm::vec3 hitPoint = glm::vec3(hitPointInternal.x, hitPointInternal.y, hitPointInternal.z);
-            const auto normal = surfaceNormal(interpolator, optixGetCurveParameter(), hitPoint);
+            hit_point_internal = optixTransformPointFromWorldToObjectSpace(hit_point_internal);
+            glm::vec3 hit_point = glm::vec3(hit_point_internal.x, hit_point_internal.y, hit_point_internal.z);
+            const auto normal = surfaceNormal(interpolator, optixGetCurveParameter(), hit_point);
             return normal;
         }
 
         // Compute surface normal of cubic primitive in world space.
-        __forceinline__ __device__ glm::vec3 NormalCubic(const int primitiveIndex) const {
-            CubicBSplineSegment interpolator(&m_strandPoints[m_segments[primitiveIndex]]);
-            float3 hitPointInternal = GetHitPoint();
+        __forceinline__ __device__ glm::vec3 NormalCubic(const int primitive_index) const {
+            CubicBSplineSegment interpolator(&strand_points[m_segments[primitive_index]]);
+            float3 hit_point_internal = GetHitPoint();
             // interpolators work in object space
-            hitPointInternal = optixTransformPointFromWorldToObjectSpace(hitPointInternal);
-            glm::vec3 hitPoint = glm::vec3(hitPointInternal.x, hitPointInternal.y, hitPointInternal.z);
-            const auto normal = surfaceNormal(interpolator, optixGetCurveParameter(), hitPoint);
+            hit_point_internal = optixTransformPointFromWorldToObjectSpace(hit_point_internal);
+            glm::vec3 hit_point = glm::vec3(hit_point_internal.x, hit_point_internal.y, hit_point_internal.z);
+            const auto normal = surfaceNormal(interpolator, optixGetCurveParameter(), hit_point);
             return normal;
         }
 
         // Compute normal
-        __forceinline__ __device__ glm::vec3 ComputeNormal(OptixPrimitiveType type, const int primitiveIndex) const {
+        __forceinline__ __device__ glm::vec3 ComputeNormal(OptixPrimitiveType type, const int primitive_index) const {
             switch (type) {
                 case OPTIX_PRIMITIVE_TYPE_ROUND_LINEAR:
-                    return NormalLinear(primitiveIndex);
+                    return NormalLinear(primitive_index);
                 case OPTIX_PRIMITIVE_TYPE_ROUND_QUADRATIC_BSPLINE:
-                    return NormalQuadratic(primitiveIndex);
+                    return NormalQuadratic(primitive_index);
                 case OPTIX_PRIMITIVE_TYPE_ROUND_CUBIC_BSPLINE:
-                    return NormalCubic(primitiveIndex);
+                    return NormalCubic(primitive_index);
             }
             return glm::vec3(0.0f);
         }
@@ -121,160 +121,160 @@ namespace EvoEngine {
 
 
     struct TriangularMesh {
-        EvoEngine::Vertex *m_vertices = nullptr;
+        evo_engine::Vertex *m_vertices = nullptr;
         glm::uvec3 *m_triangles = nullptr;
 
         __device__ HitInfo GetHitInfo() const {
-            HitInfo hitInfo;
-            const auto triangleBarycentrics = optixGetTriangleBarycentrics();
-            const auto primitiveId = optixGetPrimitiveIndex();
-            const auto triangleIndices = m_triangles[primitiveId];
-            const auto &vx = m_vertices[triangleIndices.x];
-            const auto &vy = m_vertices[triangleIndices.y];
-            const auto &vz = m_vertices[triangleIndices.z];
-            hitInfo.m_texCoord = (1.f - triangleBarycentrics.x - triangleBarycentrics.y) *
-                                 vx.m_texCoord +
-                                 triangleBarycentrics.x * vy.m_texCoord +
-                                 triangleBarycentrics.y * vz.m_texCoord;
-            hitInfo.m_position = (1.f - triangleBarycentrics.x - triangleBarycentrics.y) *
-                                 vx.m_position +
-                                 triangleBarycentrics.x * vy.m_position +
-                                 triangleBarycentrics.y * vz.m_position;
-            hitInfo.m_normal = (1.f - triangleBarycentrics.x - triangleBarycentrics.y) *
-                               vx.m_normal +
-                               triangleBarycentrics.x * vy.m_normal +
-                               triangleBarycentrics.y * vz.m_normal;
-            hitInfo.m_tangent = (1.f - triangleBarycentrics.x - triangleBarycentrics.y) *
-                                vx.m_tangent +
-                                triangleBarycentrics.x * vy.m_tangent +
-                                triangleBarycentrics.y * vz.m_tangent;
+            HitInfo hit_info;
+            const auto triangle_barycentrics = optixGetTriangleBarycentrics();
+            const auto primitive_id = optixGetPrimitiveIndex();
+            const auto triangle_indices = m_triangles[primitive_id];
+            const auto &vx = m_vertices[triangle_indices.x];
+            const auto &vy = m_vertices[triangle_indices.y];
+            const auto &vz = m_vertices[triangle_indices.z];
+            hit_info.tex_coord = (1.f - triangle_barycentrics.x - triangle_barycentrics.y) *
+                                 vx.tex_coord +
+                                 triangle_barycentrics.x * vy.tex_coord +
+                                 triangle_barycentrics.y * vz.tex_coord;
+            hit_info.position = (1.f - triangle_barycentrics.x - triangle_barycentrics.y) *
+                                 vx.position +
+                                 triangle_barycentrics.x * vy.position +
+                                 triangle_barycentrics.y * vz.position;
+            hit_info.normal = (1.f - triangle_barycentrics.x - triangle_barycentrics.y) *
+                               vx.normal +
+                               triangle_barycentrics.x * vy.normal +
+                               triangle_barycentrics.y * vz.normal;
+            hit_info.tangent = (1.f - triangle_barycentrics.x - triangle_barycentrics.y) *
+                                vx.tangent +
+                                triangle_barycentrics.x * vy.tangent +
+                                triangle_barycentrics.y * vz.tangent;
 
-            auto z = 1.f - triangleBarycentrics.x - triangleBarycentrics.y;
-            if (triangleBarycentrics.x > z && triangleBarycentrics.x > triangleBarycentrics.y) {
-                hitInfo.m_color = vy.m_color;
-                hitInfo.m_data = glm::vec3(vy.m_vertexInfo1, vy.m_vertexInfo2, vy.m_vertexInfo3);
-                hitInfo.m_data2 = vy.m_vertexInfo4;
-            } else if (triangleBarycentrics.y > z) {
-                hitInfo.m_color = vz.m_color;
-                hitInfo.m_data = glm::vec3(vz.m_vertexInfo1, vz.m_vertexInfo2, vz.m_vertexInfo3);
-                hitInfo.m_data2 = vz.m_vertexInfo4;
+            auto z = 1.f - triangle_barycentrics.x - triangle_barycentrics.y;
+            if (triangle_barycentrics.x > z && triangle_barycentrics.x > triangle_barycentrics.y) {
+                hit_info.color = vy.color;
+                hit_info.data = glm::vec3(vy.vertex_info1, vy.vertex_info2, vy.vertex_info3);
+                hit_info.data2 = vy.vertex_info4;
+            } else if (triangle_barycentrics.y > z) {
+                hit_info.color = vz.color;
+                hit_info.data = glm::vec3(vz.vertex_info1, vz.vertex_info2, vz.vertex_info3);
+                hit_info.data2 = vz.vertex_info4;
             } else {
-                hitInfo.m_color = vx.m_color;
-                hitInfo.m_data = glm::vec3(vx.m_vertexInfo1, vx.m_vertexInfo2, vx.m_vertexInfo3);
-                hitInfo.m_data2 = vx.m_vertexInfo4;
+                hit_info.color = vx.color;
+                hit_info.data = glm::vec3(vx.vertex_info1, vx.vertex_info2, vx.vertex_info3);
+                hit_info.data2 = vx.vertex_info4;
             }
-            return hitInfo;
+            return hit_info;
         }
 
-        __device__ glm::uvec3 GetIndices(const int &primitiveId) const {
-            return m_triangles[primitiveId];
+        __device__ glm::uvec3 GetIndices(const int &primitive_id) const {
+            return m_triangles[primitive_id];
         }
 
-        __device__ glm::vec2 GetTexCoord(const float2 &triangleBarycentrics,
-                                         const glm::uvec3 &triangleIndices) const {
-            return (1.f - triangleBarycentrics.x - triangleBarycentrics.y) *
-                   m_vertices[triangleIndices.x].m_texCoord +
-                   triangleBarycentrics.x * m_vertices[triangleIndices.y].m_texCoord +
-                   triangleBarycentrics.y * m_vertices[triangleIndices.z].m_texCoord;
+        __device__ glm::vec2 GetTexCoord(const float2 &triangle_barycentrics,
+                                         const glm::uvec3 &triangle_indices) const {
+            return (1.f - triangle_barycentrics.x - triangle_barycentrics.y) *
+                   m_vertices[triangle_indices.x].tex_coord +
+                   triangle_barycentrics.x * m_vertices[triangle_indices.y].tex_coord +
+                   triangle_barycentrics.y * m_vertices[triangle_indices.z].tex_coord;
         }
 
         __device__ glm::vec3
-        GetTransformedPosition(const glm::mat4 &globalTransform, const float2 &triangleBarycentrics,
-                               const glm::uvec3 &triangleIndices) const {
+        GetTransformedPosition(const glm::mat4 &global_transform, const float2 &triangle_barycentrics,
+                               const glm::uvec3 &triangle_indices) const {
 
-            return globalTransform * glm::vec4((1.f - triangleBarycentrics.x - triangleBarycentrics.y) *
-                                               m_vertices[triangleIndices.x].m_position +
-                                               triangleBarycentrics.x * m_vertices[triangleIndices.y].m_position +
-                                               triangleBarycentrics.y * m_vertices[triangleIndices.z].m_position, 1.0f);
+            return global_transform * glm::vec4((1.f - triangle_barycentrics.x - triangle_barycentrics.y) *
+                                               m_vertices[triangle_indices.x].position +
+                                               triangle_barycentrics.x * m_vertices[triangle_indices.y].position +
+                                               triangle_barycentrics.y * m_vertices[triangle_indices.z].position, 1.0f);
         }
 
-        __device__ glm::vec3 GetPosition(const float2 &triangleBarycentrics,
-                                         const glm::uvec3 &triangleIndices) const {
-            return (1.f - triangleBarycentrics.x - triangleBarycentrics.y) *
-                   m_vertices[triangleIndices.x].m_position +
-                   triangleBarycentrics.x * m_vertices[triangleIndices.y].m_position +
-                   triangleBarycentrics.y * m_vertices[triangleIndices.z].m_position;
+        __device__ glm::vec3 GetPosition(const float2 &triangle_barycentrics,
+                                         const glm::uvec3 &triangle_indices) const {
+            return (1.f - triangle_barycentrics.x - triangle_barycentrics.y) *
+                   m_vertices[triangle_indices.x].position +
+                   triangle_barycentrics.x * m_vertices[triangle_indices.y].position +
+                   triangle_barycentrics.y * m_vertices[triangle_indices.z].position;
         }
 
-        __device__ glm::vec3 GetColor(const float2 &triangleBarycentrics,
-                                      const glm::uvec3 &triangleIndices) const {
-            auto z = 1.f - triangleBarycentrics.x - triangleBarycentrics.y;
-            if (triangleBarycentrics.x > z && triangleBarycentrics.x > triangleBarycentrics.y) {
-                return m_vertices[triangleIndices.y].m_color;
-            } else if (triangleBarycentrics.y > z) {
-                return m_vertices[triangleIndices.z].m_color;
+        __device__ glm::vec3 GetColor(const float2 &triangle_barycentrics,
+                                      const glm::uvec3 &triangle_indices) const {
+            auto z = 1.f - triangle_barycentrics.x - triangle_barycentrics.y;
+            if (triangle_barycentrics.x > z && triangle_barycentrics.x > triangle_barycentrics.y) {
+                return m_vertices[triangle_indices.y].color;
+            } else if (triangle_barycentrics.y > z) {
+                return m_vertices[triangle_indices.z].color;
             }
-            return m_vertices[triangleIndices.x].m_color;
+            return m_vertices[triangle_indices.x].color;
         }
 
-        __device__ glm::vec3 GetTransformedNormal(const glm::mat4 &globalTransform, const float2 &triangleBarycentrics,
-                                                  const glm::uvec3 &triangleIndices) const {
-            return globalTransform * glm::vec4((1.f - triangleBarycentrics.x - triangleBarycentrics.y) *
-                                               m_vertices[triangleIndices.x].m_normal +
-                                               triangleBarycentrics.x * m_vertices[triangleIndices.y].m_normal +
-                                               triangleBarycentrics.y * m_vertices[triangleIndices.z].m_normal, 0.0f);
+        __device__ glm::vec3 GetTransformedNormal(const glm::mat4 &global_transform, const float2 &triangle_barycentrics,
+                                                  const glm::uvec3 &triangle_indices) const {
+            return global_transform * glm::vec4((1.f - triangle_barycentrics.x - triangle_barycentrics.y) *
+                                               m_vertices[triangle_indices.x].normal +
+                                               triangle_barycentrics.x * m_vertices[triangle_indices.y].normal +
+                                               triangle_barycentrics.y * m_vertices[triangle_indices.z].normal, 0.0f);
         }
 
         __device__ glm::vec3 GetTransformedTangent(const glm::mat4 &globalTransform, const float2 &triangleBarycentrics,
                                                    const glm::uvec3 &triangleIndices) const {
             return globalTransform * glm::vec4((1.f - triangleBarycentrics.x - triangleBarycentrics.y) *
-                                               m_vertices[triangleIndices.x].m_tangent +
-                                               triangleBarycentrics.x * m_vertices[triangleIndices.y].m_tangent +
-                                               triangleBarycentrics.y * m_vertices[triangleIndices.z].m_tangent, 0.0f);
+                                               m_vertices[triangleIndices.x].tangent +
+                                               triangleBarycentrics.x * m_vertices[triangleIndices.y].tangent +
+                                               triangleBarycentrics.y * m_vertices[triangleIndices.z].tangent, 0.0f);
         }
 
         __device__ glm::vec3 GetNormal(const float2 &triangleBarycentrics,
                                        const glm::uvec3 &triangleIndices) const {
             return (1.f - triangleBarycentrics.x - triangleBarycentrics.y) *
-                   m_vertices[triangleIndices.x].m_normal +
-                   triangleBarycentrics.x * m_vertices[triangleIndices.y].m_normal +
-                   triangleBarycentrics.y * m_vertices[triangleIndices.z].m_normal;
+                   m_vertices[triangleIndices.x].normal +
+                   triangleBarycentrics.x * m_vertices[triangleIndices.y].normal +
+                   triangleBarycentrics.y * m_vertices[triangleIndices.z].normal;
         }
 
         __device__ glm::vec3 GetTangent(const float2 &triangleBarycentrics,
                                         const glm::uvec3 &triangleIndices) const {
             return (1.f - triangleBarycentrics.x - triangleBarycentrics.y) *
-                   m_vertices[triangleIndices.x].m_tangent +
-                   triangleBarycentrics.x * m_vertices[triangleIndices.y].m_tangent +
-                   triangleBarycentrics.y * m_vertices[triangleIndices.z].m_tangent;
+                   m_vertices[triangleIndices.x].tangent +
+                   triangleBarycentrics.x * m_vertices[triangleIndices.y].tangent +
+                   triangleBarycentrics.y * m_vertices[triangleIndices.z].tangent;
         }
     };
 
     struct SurfaceMaterial {
-        EvoEngine::MaterialProperties m_materialProperties;
+        evo_engine::MaterialProperties m_materialProperties;
 
         cudaTextureObject_t m_albedoTexture;
-        cudaTextureObject_t m_normalTexture;
+        cudaTextureObject_t normalTexture;
         cudaTextureObject_t m_metallicTexture;
         cudaTextureObject_t m_roughnessTexture;
 
-        __device__ glm::vec4 GetAlbedo(const glm::vec2 &texCoord) const {
+        __device__ glm::vec4 GetAlbedo(const glm::vec2 &tex_coord) const {
             if (!m_albedoTexture)
-                return glm::vec4(m_materialProperties.m_albedoColor, 1.0f - m_materialProperties.m_transmission);
+                return glm::vec4(m_materialProperties.albedo_color, 1.0f - m_materialProperties.transmission);
             float4 textureAlbedo =
-                    tex2D<float4>(m_albedoTexture, texCoord.x, texCoord.y);
+                    tex2D<float4>(m_albedoTexture, tex_coord.x, tex_coord.y);
             return glm::vec4(textureAlbedo.x, textureAlbedo.y, textureAlbedo.z, textureAlbedo.w);
         }
 
-        __device__ float GetRoughness(const glm::vec2 &texCoord) const {
+        __device__ float GetRoughness(const glm::vec2 &tex_coord) const {
             if (!m_roughnessTexture)
-                return m_materialProperties.m_roughness;
-            return tex2D<float4>(m_roughnessTexture, texCoord.x, texCoord.y).x;
+                return m_materialProperties.roughness;
+            return tex2D<float4>(m_roughnessTexture, tex_coord.x, tex_coord.y).x;
         }
 
-        __device__ float GetMetallic(const glm::vec2 &texCoord) const {
+        __device__ float GetMetallic(const glm::vec2 &tex_coord) const {
             if (!m_metallicTexture)
-                return m_materialProperties.m_metallic;
-            return tex2D<float4>(m_metallicTexture, texCoord.x, texCoord.y).x;
+                return m_materialProperties.metallic;
+            return tex2D<float4>(m_metallicTexture, tex_coord.x, tex_coord.y).x;
         }
 
         __device__ void ApplyNormalTexture(glm::vec3 &normal,
-                                           const glm::vec2 &texCoord,
+                                           const glm::vec2 &tex_coord,
                                            const glm::vec3 &tangent) const {
-            if (!m_normalTexture)
+            if (!normalTexture)
                 return;
             float4 textureNormal =
-                    tex2D<float4>(m_normalTexture, texCoord.x, texCoord.y);
+                    tex2D<float4>(normalTexture, tex_coord.x, tex_coord.y);
             glm::vec3 B = glm::cross(normal, tangent);
             glm::mat3 TBN = glm::mat3(tangent, B, normal);
             normal =
@@ -296,57 +296,57 @@ namespace EvoEngine {
                                       float &phi) const {
             // transform view & illum vectors into local texture coordinates, i.e.
             // tangent space
-            glm::vec3 transformedDir;
-            glm::vec3 B = glm::cross(normal, tangent);
-            transformedDir[0] = glm::dot(
+            glm::vec3 transformed_dir;
+            const glm::vec3 b = glm::cross(normal, tangent);
+            transformed_dir[0] = glm::dot(
                     tangent, direction); // T[0]*view[0] + T[1]*view[1] + T[2]*view[2];
-            transformedDir[1] =
-                    glm::dot(B, direction); // B[0]*view[0] + B[1]*view[1] + B[2]*view[2];
-            transformedDir[2] = glm::dot(
+            transformed_dir[1] =
+                    glm::dot(b, direction); // B[0]*view[0] + B[1]*view[1] + B[2]*view[2];
+            transformed_dir[2] = glm::dot(
                     normal, direction); // N[0]*view[0] + N[1]*view[1] + N[2]*view[2];
-            if (isnan(transformedDir[0])) {
+            if (isnan(transformed_dir[0])) {
                 theta = 0.f;
                 phi = 0.f;
                 return;
             }
 
-            assert(fabs(transformedDir[2]) <= 1.01f);
+            assert(fabs(transformed_dir[2]) <= 1.01f);
 
-            if (transformedDir[2] < 0.0) {
+            if (transformed_dir[2] < 0.0) {
                 phi = 0.0;
                 theta = 90.0;
                 return;
             }
 
-            theta = glm::degrees(acosf(transformedDir[2]));
+            theta = glm::degrees(acosf(transformed_dir[2]));
 
-            phi = glm::degrees(atan2(transformedDir[1], transformedDir[0])) + 360.0f;
+            phi = glm::degrees(atan2(transformed_dir[1], transformed_dir[0])) + 360.0f;
 
             if (phi > 360.f)
                 phi -= 360.f;
         }
 
-        __device__ void GetValue(const glm::vec2 &texCoord, const glm::vec3 &viewDir,
-                                 const glm::vec3 &illuminationDir,
+        __device__ void GetValue(const glm::vec2 &tex_coord, const glm::vec3 &view_dir,
+                                 const glm::vec3 &illumination_dir,
                                  const glm::vec3 &normal, const glm::vec3 tangent,
                                  glm::vec3 &out, const bool &print) const {
             out = glm::vec3(1.0f);
-            float illuminationTheta, illuminationPhi, viewTheta, viewPhi;
-            ComputeAngles(-viewDir, normal, tangent, viewTheta, viewPhi);
-            ComputeAngles(illuminationDir, normal, tangent, illuminationTheta,
-                          illuminationPhi);
+            float illumination_theta, illumination_phi, view_theta, view_phi;
+            ComputeAngles(-view_dir, normal, tangent, view_theta, view_phi);
+            ComputeAngles(illumination_dir, normal, tangent, illumination_theta,
+                          illumination_phi);
 
             if (print) {
-                printf("TexCoord[%.2f, %.2f]\n", texCoord.x, texCoord.y);
-                printf("Angles[%.1f, %.1f, %.1f, %.1f]\n", illuminationTheta,
-                       illuminationPhi, viewTheta, viewPhi);
+                printf("TexCoord[%.2f, %.2f]\n", tex_coord.x, tex_coord.y);
+                printf("Angles[%.1f, %.1f, %.1f, %.1f]\n", illumination_theta,
+                       illumination_phi, view_theta, view_phi);
                 printf("Normal[%.2f, %.2f, %.2f]\n", normal.x, normal.y, normal.z);
-                printf("View[%.2f, %.2f, %.2f]\n", viewDir.x, viewDir.y, viewDir.z);
-                printf("Illumination[%.2f, %.2f, %.2f]\n", illuminationDir.x,
-                       illuminationDir.y, illuminationDir.z);
+                printf("View[%.2f, %.2f, %.2f]\n", view_dir.x, view_dir.y, view_dir.z);
+                printf("Illumination[%.2f, %.2f, %.2f]\n", illumination_dir.x,
+                       illumination_dir.y, illumination_dir.z);
             }
-            m_btf.GetValueDeg(texCoord, illuminationTheta, illuminationPhi, viewTheta,
-                              viewPhi, out, print);
+            m_btf.GetValueDeg(tex_coord, illumination_theta, illumination_phi, view_theta,
+                              view_phi, out, print);
             out /= 256.0f;
             if (print) {
                 printf("ColBase[%.2f, %.2f, %.2f]\n", out.x, out.y, out.z);
@@ -365,23 +365,23 @@ namespace EvoEngine {
         void *m_material;
 
         __device__ HitInfo
-        GetHitInfo(glm::vec3 &rayDirection, bool checkNormal = true) const {
-            HitInfo retVal;
+        GetHitInfo(glm::vec3 &ray_direction, bool check_normal = true) const {
+            HitInfo ret_val;
             if (m_geometryType != RendererType::Curve) {
                 auto *mesh = (TriangularMesh *) m_geometry;
-                retVal = mesh->GetHitInfo();
+                ret_val = mesh->GetHitInfo();
 
             } else {
                 auto *curves = (Curves *) m_geometry;
-                retVal = curves->GetHitInfo();
+                ret_val = curves->GetHitInfo();
             }
-            retVal.m_normal = glm::normalize(m_globalTransform * glm::vec4(retVal.m_normal, 0.0f));
-            if (checkNormal && glm::dot(rayDirection, retVal.m_normal) > 0.0f) {
-                retVal.m_normal = -retVal.m_normal;
+            ret_val.normal = glm::normalize(m_globalTransform * glm::vec4(ret_val.normal, 0.0f));
+            if (check_normal && glm::dot(ray_direction, ret_val.normal) > 0.0f) {
+                ret_val.normal = -ret_val.normal;
             }
-            retVal.m_tangent = glm::normalize(m_globalTransform * glm::vec4(retVal.m_tangent, 0.0f));
-            retVal.m_position = m_globalTransform * glm::vec4(retVal.m_position, 1.0f);
-            return retVal;
+            ret_val.tangent = glm::normalize(m_globalTransform * glm::vec4(ret_val.tangent, 0.0f));
+            ret_val.position = m_globalTransform * glm::vec4(ret_val.position, 1.0f);
+            return ret_val;
         }
     };
 
@@ -389,21 +389,21 @@ namespace EvoEngine {
     struct __align__(OPTIX_SBT_RECORD_ALIGNMENT) CameraRenderingRayGenRecord {
         __align__(
                 OPTIX_SBT_RECORD_ALIGNMENT) char header[OPTIX_SBT_RECORD_HEADER_SIZE];
-        void *m_data;
+        void *data;
     };
 
 /*! SBT record for a miss program */
     struct __align__(OPTIX_SBT_RECORD_ALIGNMENT) CameraRenderingRayMissRecord {
         __align__(
                 OPTIX_SBT_RECORD_ALIGNMENT) char header[OPTIX_SBT_RECORD_HEADER_SIZE];
-        void *m_data;
+        void *data;
     };
 
 /*! SBT record for a hitgroup program */
     struct __align__(OPTIX_SBT_RECORD_ALIGNMENT) CameraRenderingRayHitRecord {
         __align__(
                 OPTIX_SBT_RECORD_ALIGNMENT) char header[OPTIX_SBT_RECORD_HEADER_SIZE];
-        SBT m_data;
+        SBT data;
     };
 
 /*! SBT record for a raygen program */
@@ -411,7 +411,7 @@ namespace EvoEngine {
     IlluminationEstimationRayGenRecord {
         __align__(
                 OPTIX_SBT_RECORD_ALIGNMENT) char header[OPTIX_SBT_RECORD_HEADER_SIZE];
-        void *m_data;
+        void *data;
     };
 
 /*! SBT record for a miss program */
@@ -419,7 +419,7 @@ namespace EvoEngine {
     IlluminationEstimationRayMissRecord {
         __align__(
                 OPTIX_SBT_RECORD_ALIGNMENT) char header[OPTIX_SBT_RECORD_HEADER_SIZE];
-        void *m_data;
+        void *data;
     };
 
 /*! SBT record for a hitgroup program */
@@ -427,14 +427,14 @@ namespace EvoEngine {
     IlluminationEstimationRayHitRecord {
         __align__(
                 OPTIX_SBT_RECORD_ALIGNMENT) char header[OPTIX_SBT_RECORD_HEADER_SIZE];
-        SBT m_data;
+        SBT data;
     };
     /*! SBT record for a raygen program */
     struct __align__(OPTIX_SBT_RECORD_ALIGNMENT)
     PointCloudScanningRayGenRecord {
         __align__(
                 OPTIX_SBT_RECORD_ALIGNMENT) char header[OPTIX_SBT_RECORD_HEADER_SIZE];
-        void *m_data;
+        void *data;
     };
 
 /*! SBT record for a miss program */
@@ -442,7 +442,7 @@ namespace EvoEngine {
     PointCloudScanningRayMissRecord {
         __align__(
                 OPTIX_SBT_RECORD_ALIGNMENT) char header[OPTIX_SBT_RECORD_HEADER_SIZE];
-        void *m_data;
+        void *data;
     };
 
 /*! SBT record for a hitgroup program */
@@ -450,6 +450,6 @@ namespace EvoEngine {
     PointCloudScanningRayHitRecord {
         __align__(
                 OPTIX_SBT_RECORD_ALIGNMENT) char header[OPTIX_SBT_RECORD_HEADER_SIZE];
-        SBT m_data;
+        SBT data;
     };
 } // namespace EvoEngine

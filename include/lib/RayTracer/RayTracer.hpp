@@ -23,7 +23,7 @@
 #include "HitInfo.hpp"
 #include "VulkanInterlop.hpp"
 
-namespace EvoEngine {
+namespace evo_engine {
 	enum class OutputType {
 		Color, Normal, Albedo, Depth
 	};
@@ -190,9 +190,9 @@ namespace EvoEngine {
 
 	template<typename T>
 	struct IlluminationSampler {
-		EvoEngine::Vertex m_a;
-		EvoEngine::Vertex m_b;
-		EvoEngine::Vertex m_c;
+		evo_engine::Vertex m_a;
+		evo_engine::Vertex m_b;
+		evo_engine::Vertex m_c;
 		/**
 		 * \brief The calculated overall direction where the triangle received most
 		 * light.
@@ -206,9 +206,9 @@ namespace EvoEngine {
 		bool m_backFace = true;
 
 		[[nodiscard]] float GetArea() const {
-			const float a = glm::distance(m_a.m_position, m_b.m_position);
-			const float b = glm::distance(m_b.m_position, m_c.m_position);
-			const float c = glm::distance(m_c.m_position, m_a.m_position);
+			const float a = glm::distance(m_a.position, m_b.position);
+			const float b = glm::distance(m_b.position, m_c.position);
+			const float c = glm::distance(m_c.position, m_a.position);
 			const float p = (a + b + c) * 0.5f;
 			return glm::sqrt(p * (p - a) * (p - b) * (p - c));
 		}
@@ -249,7 +249,7 @@ namespace EvoEngine {
 		MaterialType m_materialType = MaterialType::Default;
 
 		BTFBase* m_btfBase;
-		EvoEngine::MaterialProperties m_materialProperties;
+		evo_engine::MaterialProperties m_materialProperties;
 
 		std::shared_ptr<CudaImage> m_albedoTexture;
 		std::shared_ptr<CudaImage> m_normalTexture;
@@ -285,9 +285,9 @@ namespace EvoEngine {
 		RendererType m_rendererType = RendererType::Default;
 		PrimitiveType m_geometryType = PrimitiveType::Triangle;
 		union {
-			std::vector<EvoEngine::Vertex>* m_vertices = nullptr;
-			std::vector<EvoEngine::SkinnedVertex>* m_skinnedVertices;
-			std::vector<EvoEngine::StrandPoint>* m_curvePoints;
+			std::vector<evo_engine::Vertex>* m_vertices = nullptr;
+			std::vector<evo_engine::SkinnedVertex>* m_skinnedVertices;
+			std::vector<evo_engine::StrandPoint>* m_curvePoints;
 		};
 		std::vector<glm::mat4>* m_boneMatrices = nullptr;
 		std::vector<InstanceMatrix>* m_instanceMatrices = nullptr;

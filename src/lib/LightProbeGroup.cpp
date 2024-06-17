@@ -4,13 +4,15 @@
 
 #include "LightProbeGroup.hpp"
 #include "RayTracerLayer.hpp"
-using namespace EvoEngine;
-void LightProbeGroup::CalculateIllumination(const RayProperties& rayProperties, int seed, float pushNormalDistance) {
-    if (m_lightProbes.empty()) return;
-    CudaModule::EstimateIlluminationRayTracing(Application::GetLayer<RayTracerLayer>()->m_environmentProperties, rayProperties, m_lightProbes, seed, pushNormalDistance);
+using namespace evo_engine;
+void LightProbeGroup::CalculateIllumination(const RayProperties& ray_properties, int seed, float push_normal_distance) {
+  if (light_probes.empty())
+    return;
+  CudaModule::EstimateIlluminationRayTracing(Application::GetLayer<RayTracerLayer>()->environment_properties,
+                                             ray_properties, light_probes, seed, push_normal_distance);
 }
 
 bool LightProbeGroup::OnInspect() {
-    ImGui::Text("Light probes size: %llu", m_lightProbes.size());
-    return false;
+  ImGui::Text("Light probes size: %llu", light_probes.size());
+  return false;
 }

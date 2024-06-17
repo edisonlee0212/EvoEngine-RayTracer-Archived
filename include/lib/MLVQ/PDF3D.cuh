@@ -4,7 +4,7 @@
 #include "PDF2D.cuh"
 #include "SharedCoordinates.cuh"
 
-namespace EvoEngine {
+namespace evo_engine {
     template<typename T>
     struct PDF3D {
         // the used number of 3D functions

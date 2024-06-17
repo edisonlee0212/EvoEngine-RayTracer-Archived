@@ -2,7 +2,7 @@
 
 #include "CUDABuffer.hpp"
 #include "glm/glm.hpp"
-namespace EvoEngine {
+namespace evo_engine {
     struct SharedCoordinates {
         // false ... use uniform distribution in Beta
         // true ... use uniform distribution in cos(Beta)

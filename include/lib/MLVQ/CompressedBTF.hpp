@@ -4,8 +4,7 @@
 #include "IAsset.hpp"
 #include "filesystem"
 #include "BTFBase.cuh"
-using namespace EvoEngine;
-namespace EvoEngine {
+namespace evo_engine {
     class CompressedBTF : public IAsset {
         std::vector<float> m_sharedCoordinatesBetaAngles;
 

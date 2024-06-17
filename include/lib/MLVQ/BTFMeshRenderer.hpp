@@ -2,14 +2,13 @@
 #include "evoengine-pch.hpp"
 #include "IPrivateComponent.hpp"
 
-using namespace EvoEngine;
-namespace EvoEngine {
+namespace evo_engine {
     class BTFMeshRenderer : public IPrivateComponent {
     public:
-        AssetRef m_mesh;
-        AssetRef m_btf;
+        AssetRef mesh;
+        AssetRef btf;
 
-        bool OnInspect(const std::shared_ptr<EditorLayer>& editorLayer) override;
+        bool OnInspect(const std::shared_ptr<EditorLayer>& editor_layer) override;
         void Serialize(YAML::Emitter &out) const override;
         void Deserialize(const YAML::Node &in) override;
 
