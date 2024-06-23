@@ -1,7 +1,6 @@
 #pragma once
 #include "evoengine-pch.hpp"
 
-
 #include "CUDAModule.hpp"
 #include "CompressedBTF.hpp"
 #include "Cubemap.hpp"
@@ -57,11 +56,9 @@ class RayTracerLayer : public ILayer {
 
   bool UpdateScene(const std::shared_ptr<Scene>& scene);
 
-  void Update() override;
-
   void OnCreate() override;
 
-  void PreUpdate() override;
+  void LateUpdate() override;
 
   void OnInspect(const std::shared_ptr<EditorLayer>& editor_layer) override;
 

@@ -399,7 +399,7 @@ void RayTracerLayer::OnCreate() {
   });
 }
 
-void RayTracerLayer::PreUpdate() {
+void RayTracerLayer::LateUpdate() {
   const auto scene = GetScene();
   bool ray_tracer_updated = UpdateScene(scene);
   if (!CudaModule::GetRayTracer()->m_instances.empty()) {
@@ -628,23 +628,6 @@ void RayTracerLayer::RayCameraWindow() {
   }
   ImGui::End();
   ImGui::PopStyleVar();
-}
-
-void RayTracerLayer::Update() {
-  if (show_camera_window) {
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0, 0});
-    if (ImGui::Begin("Camera (RT)")) {
-      if (ImGui::BeginChild("RayCameraRenderer", ImVec2(0, 0), false,
-                            ImGuiWindowFlags_None | ImGuiWindowFlags_MenuBar)) {
-        if (ray_tracer_camera_ && ray_tracer_camera_->rendered_ && ImGui::IsWindowFocused()) {
-          Application::GetLayer<EditorLayer>()->main_camera_focus_override = true;
-        }
-      }
-      ImGui::EndChild();
-    }
-    ImGui::End();
-    ImGui::PopStyleVar();
-  }
 }
 
 bool RayTracerLayer::CheckMaterial(RayTracedMaterial& ray_tracer_material,
