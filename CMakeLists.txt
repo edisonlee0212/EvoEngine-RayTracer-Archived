@@ -21,11 +21,11 @@ endif ()
 # We need a CMAKE_DIR with some code to find external dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 
-set(EVOENGINE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../EvoEngine)
+set(EVOENGINE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../EvoEngine-Archived)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 if (NOT TARGET evoengine)
-	add_subdirectory(${EVOENGINE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/EvoEngine)
+	add_subdirectory(${EVOENGINE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/EvoEngine-Archived)
 endif ()
 
 include(${CMAKE_MODULE_PATH}/configure_build_type.cmake)
